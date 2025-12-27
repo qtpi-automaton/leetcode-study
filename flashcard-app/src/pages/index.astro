@@ -31,7 +31,13 @@ import Layout from '../layouts/Layout.astro';
 			<div class="flashcard-container">
 				<div id="flashcard" class="flashcard">
 					<div class="flashcard-content">
-						<div id="card-content">Loading flashcards...</div>
+						<div id="card-content">
+							<div class="loading-indicator">
+								<div class="spinner"></div>
+								<p>Loading flashcards...</p>
+								<p id="loading-progress" class="loading-progress">0 / 0</p>
+							</div>
+						</div>
 					</div>
 					<button id="flip-btn" class="flip-btn">Flip Card</button>
 				</div>
@@ -49,6 +55,32 @@ import Layout from '../layouts/Layout.astro';
 		color: white;
 		font-size: 16px;
 		line-height: 1.6;
+	}
+
+	.loading-indicator {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+		padding: 2rem;
+	}
+
+	.spinner {
+		width: 40px;
+		height: 40px;
+		border: 3px solid #374151;
+		border-top-color: #60a5fa;
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+
+	.loading-progress {
+		font-size: 0.9rem;
+		color: #9ca3af;
 	}
 
 	#flashcard-app {
@@ -344,7 +376,6 @@ import Layout from '../layouts/Layout.astro';
 
 		async loadFlashcards() {
 			try {
-				// Get base path injected from Astro
 				const base = window.__BASE_URL__ || '/';
 				const response = await fetch(`${base}api/flashcards.json`);
 				if (!response.ok) {
@@ -353,8 +384,14 @@ import Layout from '../layouts/Layout.astro';
 				
 				const flashcardList = await response.json();
 				const allCards = [];
+				const total = flashcardList.length;
+				const progressEl = document.getElementById('loading-progress');
 
-				for (const card of flashcardList) {
+				for (let i = 0; i < flashcardList.length; i++) {
+					const card = flashcardList[i];
+					if (progressEl) {
+						progressEl.textContent = `${i + 1} / ${total}`;
+					}
 					try {
 						const frontResponse = await fetch(`${base}${card.frontFile.slice(1)}`);
 						const backResponse = await fetch(`${base}${card.backFile.slice(1)}`);
