@@ -38,8 +38,8 @@ import Layout from '../layouts/Layout.astro';
 
 			<div class="typing-container">
 				<div class="panel target-panel">
-					<div class="panel-label">Target</div>
-					<pre id="target-code" class="code-block"><code class="language-python"></code></pre>
+					<div class="panel-label">Target — type what you see</div>
+					<pre id="target-code" class="code-block"></pre>
 				</div>
 				
 				<div class="panel input-panel">
@@ -215,6 +215,32 @@ import Layout from '../layouts/Layout.astro';
 		cursor: text;
 		font-size: 16px;
 		resize: none;
+	}
+
+	.char-correct-bg {
+		background: rgba(74, 222, 128, 0.25);
+		color: #4ade80;
+	}
+
+	.char-incorrect-bg {
+		background: rgba(239, 68, 68, 0.35);
+		color: #fca5a5;
+		text-decoration: underline wavy #ef4444;
+	}
+
+	.char-pending {
+		color: #64748b;
+	}
+
+	.char-current {
+		background: rgba(96, 165, 250, 0.4);
+		color: white;
+		animation: pulse 1s infinite;
+	}
+
+	@keyframes pulse {
+		0%, 100% { background: rgba(96, 165, 250, 0.4); }
+		50% { background: rgba(96, 165, 250, 0.7); }
 	}
 
 	.cursor {
@@ -394,19 +420,34 @@ import Layout from '../layouts/Layout.astro';
 			document.getElementById('pattern-name').textContent = pattern.name;
 			document.getElementById('counter').textContent = `${this.currentIndex + 1} / ${this.patterns.length}`;
 			
-			// Render target with syntax highlighting
-			const targetCode = document.querySelector('#target-code code');
-			targetCode.textContent = this.currentCode;
-			if (window.Prism) {
-				Prism.highlightElement(targetCode);
-			}
-			
+			this.renderTargetCode('');
 			this.renderTypedCode('');
 			this.resetStats();
 			
 			document.getElementById('typing-input').value = '';
 			document.getElementById('typing-input').focus();
 			document.getElementById('completion-message').classList.remove('show');
+		}
+
+		renderTargetCode(typed) {
+			const display = document.getElementById('target-code');
+			let html = '';
+			
+			for (let i = 0; i < this.currentCode.length; i++) {
+				const targetChar = this.currentCode[i];
+				const typedChar = typed[i];
+				let className = 'char-pending';
+				
+				if (i < typed.length) {
+					className = typedChar === targetChar ? 'char-correct-bg' : 'char-incorrect-bg';
+				} else if (i === typed.length) {
+					className = 'char-current';
+				}
+				
+				html += `<span class="${className}">${this.escapeHtml(targetChar)}</span>`;
+			}
+			
+			display.innerHTML = html;
 		}
 
 		renderTypedCode(typed) {
@@ -447,6 +488,7 @@ import Layout from '../layouts/Layout.astro';
 				this.startTimer();
 			}
 			
+			this.renderTargetCode(typed);
 			this.renderTypedCode(typed);
 			this.updateStats(typed);
 			
