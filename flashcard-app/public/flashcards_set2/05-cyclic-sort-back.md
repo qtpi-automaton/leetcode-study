@@ -3,15 +3,13 @@
 def cyclic_sort(nums):
     i = 0
     while i < len(nums):
-        correct_idx = nums[i] - 1  # where this number should be
-        
-        # if not in correct position, swap
-        if nums[i] != nums[correct_idx]:
-            nums[i], nums[correct_idx] = nums[correct_idx], nums[i]
+        correct = nums[i] - 1  # where it should be
+        if nums[i] != nums[correct]:
+            nums[i], nums[correct] = nums[correct], nums[i]
         else:
-            i += 1  # already correct, move on
-    
+            i += 1
+
     return nums
 
-# Find missing: after sort, nums[i] != i+1 means i+1 is missing
+# After sort: nums[i] != i+1 means i+1 is missing
 ```

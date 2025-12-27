@@ -395,7 +395,7 @@ import Layout from '../layouts/Layout.astro';
 			
 			commentsToggle.addEventListener('change', () => {
 				this.includeComments = commentsToggle.checked;
-				this.restart();
+				this.updateCodeVersion();
 			});
 			
 			document.getElementById('restart-btn').addEventListener('click', () => this.restart());
@@ -477,6 +477,16 @@ import Layout from '../layouts/Layout.astro';
 			if (char === '&') return '&amp;';
 			if (char === '\n') return '\n';
 			return char;
+		}
+
+		updateCodeVersion() {
+			// Switch code version without resetting typed input
+			const pattern = this.patterns[this.currentIndex];
+			this.currentCode = this.includeComments ? pattern.code : pattern.codeNoComments;
+			const typed = document.getElementById('typing-input').value;
+			this.renderTargetCode(typed);
+			this.renderTypedCode(typed);
+			this.updateStats(typed);
 		}
 
 		handleInput() {

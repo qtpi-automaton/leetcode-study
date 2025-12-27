@@ -2,28 +2,24 @@
 ```python
 from collections import deque, defaultdict
 
-def topological_sort(num_nodes, edges):
-    # Build graph and indegree count
+def topo_sort(n, edges):
     graph = defaultdict(list)
-    indegree = [0] * num_nodes
-    
+    indegree = [0] * n
+
     for src, dst in edges:
         graph[src].append(dst)
         indegree[dst] += 1
-    
-    # Start with nodes having no dependencies
-    queue = deque([i for i in range(num_nodes) if indegree[i] == 0])
+
+    queue = deque([i for i in range(n) if indegree[i] == 0])
     result = []
-    
+
     while queue:
         node = queue.popleft()
         result.append(node)
-        
-        for neighbor in graph[node]:
-            indegree[neighbor] -= 1
-            if indegree[neighbor] == 0:
-                queue.append(neighbor)
-    
-    # If result has all nodes, valid ordering exists
-    return result if len(result) == num_nodes else []
+        for nei in graph[node]:
+            indegree[nei] -= 1
+            if indegree[nei] == 0:
+                queue.append(nei)
+
+    return result if len(result) == n else []
 ```

@@ -2,27 +2,21 @@
 ```python
 def dfs(node):
     if not node:
-        return  # base case
-    
+        return
+
     # PREORDER: process before children
     print(node.val)
-    
-    dfs(node.left)
-    
-    # INORDER: process between children (BST gives sorted)
-    # print(node.val)
-    
-    dfs(node.right)
-    
-    # POSTORDER: process after children (bottom-up)
-    # print(node.val)
 
-# Path sum pattern
+    dfs(node.left)
+    # INORDER: process between (BST = sorted)
+    dfs(node.right)
+    # POSTORDER: process after (bottom-up)
+
 def has_path_sum(node, target):
     if not node:
         return False
-    if not node.left and not node.right:  # leaf
+    if not node.left and not node.right:
         return node.val == target
-    return (has_path_sum(node.left, target - node.val) or
-            has_path_sum(node.right, target - node.val))
+    target -= node.val
+    return has_path_sum(node.left, target) or has_path_sum(node.right, target)
 ```
