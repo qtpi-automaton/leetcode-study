@@ -1,0 +1,326 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Big O quiz data for Set 0
+const quizData = [
+	{
+		name: "Array (Dynamic)",
+		operations: [
+			{ op: "Access by index", answer: "O(1)" },
+			{ op: "Search", answer: "O(n)" },
+			{ op: "Insert at end", answer: "O(1)" },
+			{ op: "Insert at beginning", answer: "O(n)" },
+			{ op: "Delete at end", answer: "O(1)" },
+			{ op: "Delete at beginning", answer: "O(n)" },
+		]
+	},
+	{
+		name: "HashMap",
+		operations: [
+			{ op: "Search (expected)", answer: "O(1)" },
+			{ op: "Search (worst)", answer: "O(n)" },
+			{ op: "Insert (expected)", answer: "O(1)" },
+			{ op: "Insert (worst)", answer: "O(n)" },
+			{ op: "Delete (expected)", answer: "O(1)" },
+			{ op: "Delete (worst)", answer: "O(n)" },
+		]
+	},
+	{
+		name: "Linked List",
+		operations: [
+			{ op: "Access by index", answer: "O(n)" },
+			{ op: "Search", answer: "O(n)" },
+			{ op: "Insert at head", answer: "O(1)" },
+			{ op: "Insert at tail (with pointer)", answer: "O(1)" },
+			{ op: "Insert at middle", answer: "O(n)" },
+			{ op: "Delete at head", answer: "O(1)" },
+		]
+	},
+	{
+		name: "Stack",
+		operations: [
+			{ op: "Push", answer: "O(1)" },
+			{ op: "Pop", answer: "O(1)" },
+			{ op: "Peek", answer: "O(1)" },
+			{ op: "Search", answer: "O(n)" },
+		]
+	},
+	{
+		name: "Queue",
+		operations: [
+			{ op: "Enqueue", answer: "O(1)" },
+			{ op: "Dequeue", answer: "O(1)" },
+			{ op: "Peek", answer: "O(1)" },
+			{ op: "Search", answer: "O(n)" },
+		]
+	},
+	{
+		name: "Heap (Binary)",
+		operations: [
+			{ op: "Insert", answer: "O(log n)" },
+			{ op: "Extract min/max", answer: "O(log n)" },
+			{ op: "Peek min/max", answer: "O(1)" },
+			{ op: "Search", answer: "O(n)" },
+			{ op: "Heapify array", answer: "O(n)" },
+		]
+	},
+	{
+		name: "Binary Search Tree (balanced)",
+		operations: [
+			{ op: "Search", answer: "O(log n)" },
+			{ op: "Insert", answer: "O(log n)" },
+			{ op: "Delete", answer: "O(log n)" },
+			{ op: "Find min/max", answer: "O(log n)" },
+		]
+	},
+	{
+		name: "Binary Search Tree (unbalanced worst)",
+		operations: [
+			{ op: "Search", answer: "O(n)" },
+			{ op: "Insert", answer: "O(n)" },
+			{ op: "Delete", answer: "O(n)" },
+		]
+	},
+	{
+		name: "Trie",
+		operations: [
+			{ op: "Search", answer: "O(m)" },
+			{ op: "Insert", answer: "O(m)" },
+			{ op: "Delete", answer: "O(m)" },
+			{ op: "Prefix search", answer: "O(m)" },
+		]
+	},
+	{
+		name: "Graph (Adjacency List)",
+		operations: [
+			{ op: "Add vertex", answer: "O(1)" },
+			{ op: "Add edge", answer: "O(1)" },
+			{ op: "Remove vertex", answer: "O(V + E)" },
+			{ op: "Remove edge", answer: "O(E)" },
+			{ op: "BFS/DFS", answer: "O(V + E)" },
+		]
+	},
+	{
+		name: "Graph (Adjacency Matrix)",
+		operations: [
+			{ op: "Add vertex", answer: "O(V²)" },
+			{ op: "Add edge", answer: "O(1)" },
+			{ op: "Remove vertex", answer: "O(V²)" },
+			{ op: "Remove edge", answer: "O(1)" },
+			{ op: "Check if edge exists", answer: "O(1)" },
+		]
+	},
+];
+
+const choices = ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)", "O(m)", "O(V + E)", "O(V²)", "O(E)"];
+---
+
+<Layout title="Big O Quiz">
+	<main>
+		<div id="quiz-app">
+			<div class="header">
+				<h1>Big O Complexity Quiz</h1>
+				<p class="subtitle">Select the correct time complexity for each operation</p>
+			</div>
+
+			<div class="controls">
+				<button id="check-btn">Check Answers</button>
+				<button id="reset-btn">Reset</button>
+				<span id="score"></span>
+			</div>
+
+			<div class="quiz-grid">
+				{quizData.map((ds, dsIndex) => (
+					<div class="ds-card" data-ds={dsIndex}>
+						<h2>{ds.name}</h2>
+						<div class="operations">
+							{ds.operations.map((item, opIndex) => (
+								<div class="operation-row" data-answer={item.answer}>
+									<span class="op-name">{item.op}</span>
+									<select class="complexity-select" data-ds={dsIndex} data-op={opIndex}>
+										<option value="">Select...</option>
+										{choices.map(c => (
+											<option value={c}>{c}</option>
+										))}
+									</select>
+									<span class="result-icon"></span>
+								</div>
+							))}
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1.5rem;
+		max-width: 1200px;
+		color: white;
+	}
+
+	.header {
+		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.header h1 {
+		color: #60a5fa;
+		margin-bottom: 0.5rem;
+	}
+
+	.subtitle {
+		color: #9ca3af;
+	}
+
+	.controls {
+		display: flex;
+		justify-content: center;
+		gap: 1rem;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.controls button {
+		padding: 0.75rem 1.5rem;
+		background: #4f46e5;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 14px;
+	}
+
+	.controls button:hover {
+		background: #3730a3;
+	}
+
+	#score {
+		font-size: 1.1rem;
+		font-weight: bold;
+		color: #10b981;
+	}
+
+	.quiz-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.ds-card {
+		background: #1f2937;
+		border-radius: 8px;
+		padding: 1.25rem;
+	}
+
+	.ds-card h2 {
+		color: #34d399;
+		font-size: 1.1rem;
+		margin-bottom: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid #374151;
+	}
+
+	.operations {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.operation-row {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.op-name {
+		flex: 1;
+		font-size: 0.9rem;
+		color: #d1d5db;
+	}
+
+	.complexity-select {
+		padding: 0.4rem 0.5rem;
+		background: #374151;
+		color: white;
+		border: 1px solid #4b5563;
+		border-radius: 4px;
+		font-size: 0.85rem;
+		cursor: pointer;
+		min-width: 100px;
+	}
+
+	.complexity-select:focus {
+		outline: none;
+		border-color: #60a5fa;
+	}
+
+	.complexity-select.correct {
+		background: #065f46;
+		border-color: #10b981;
+	}
+
+	.complexity-select.incorrect {
+		background: #7f1d1d;
+		border-color: #ef4444;
+	}
+
+	.result-icon {
+		width: 20px;
+		font-size: 1rem;
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		const checkBtn = document.getElementById('check-btn');
+		const resetBtn = document.getElementById('reset-btn');
+		const scoreEl = document.getElementById('score');
+
+		checkBtn.addEventListener('click', () => {
+			let correct = 0;
+			let total = 0;
+
+			document.querySelectorAll('.operation-row').forEach(row => {
+				const select = row.querySelector('select');
+				const answer = row.dataset.answer;
+				const icon = row.querySelector('.result-icon');
+				total++;
+
+				select.classList.remove('correct', 'incorrect');
+				
+				if (select.value === answer) {
+					correct++;
+					select.classList.add('correct');
+					icon.textContent = '✓';
+					icon.style.color = '#10b981';
+				} else if (select.value) {
+					select.classList.add('incorrect');
+					icon.textContent = '✗';
+					icon.style.color = '#ef4444';
+				} else {
+					icon.textContent = '–';
+					icon.style.color = '#6b7280';
+				}
+			});
+
+			const pct = Math.round((correct / total) * 100);
+			scoreEl.textContent = `${correct}/${total} (${pct}%)`;
+		});
+
+		resetBtn.addEventListener('click', () => {
+			document.querySelectorAll('.complexity-select').forEach(select => {
+				select.value = '';
+				select.classList.remove('correct', 'incorrect');
+			});
+			document.querySelectorAll('.result-icon').forEach(icon => {
+				icon.textContent = '';
+			});
+			scoreEl.textContent = '';
+		});
+	});
+</script>
+</Layout>
