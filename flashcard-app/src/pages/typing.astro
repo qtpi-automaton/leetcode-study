@@ -217,57 +217,6 @@ import Layout from '../layouts/Layout.astro';
 		resize: none;
 	}
 
-	.char-correct-bg {
-		background: rgba(74, 222, 128, 0.25);
-		color: #4ade80;
-	}
-
-	.char-incorrect-bg {
-		background: rgba(239, 68, 68, 0.35);
-		color: #fca5a5;
-		text-decoration: underline wavy #ef4444;
-	}
-
-	.char-pending {
-		color: #64748b;
-	}
-
-	.char-current {
-		background: rgba(96, 165, 250, 0.4);
-		color: white;
-		animation: pulse 1s infinite;
-	}
-
-	@keyframes pulse {
-		0%, 100% { background: rgba(96, 165, 250, 0.4); }
-		50% { background: rgba(96, 165, 250, 0.7); }
-	}
-
-	.cursor {
-		display: inline-block;
-		width: 2px;
-		height: 1.2em;
-		background: #60a5fa;
-		animation: blink 1s infinite;
-		vertical-align: text-bottom;
-		margin-left: 1px;
-	}
-
-	@keyframes blink {
-		0%, 50% { opacity: 1; }
-		51%, 100% { opacity: 0; }
-	}
-
-	.char-correct {
-		color: #4ade80;
-	}
-
-	.char-incorrect {
-		color: #ef4444;
-		background: #450a0a;
-		text-decoration: underline wavy #ef4444;
-	}
-
 	.completion-message {
 		display: none;
 		text-align: center;
@@ -302,6 +251,59 @@ import Layout from '../layouts/Layout.astro';
 
 	#next-pattern-btn:hover {
 		background: #3730a3;
+	}
+</style>
+
+<style is:global>
+	.char-correct-bg {
+		background: rgba(74, 222, 128, 0.25);
+		color: #4ade80;
+	}
+
+	.char-incorrect-bg {
+		background: rgba(239, 68, 68, 0.35);
+		color: #fca5a5;
+		text-decoration: underline wavy #ef4444;
+	}
+
+	.char-pending {
+		color: #64748b;
+	}
+
+	.char-current {
+		background: rgba(96, 165, 250, 0.4);
+		color: white;
+		animation: pulse-char 1s infinite;
+	}
+
+	@keyframes pulse-char {
+		0%, 100% { background: rgba(96, 165, 250, 0.4); }
+		50% { background: rgba(96, 165, 250, 0.7); }
+	}
+
+	.cursor {
+		display: inline-block;
+		width: 2px;
+		height: 1.2em;
+		background: #60a5fa;
+		animation: blink-cursor 1s infinite;
+		vertical-align: text-bottom;
+		margin-left: 1px;
+	}
+
+	@keyframes blink-cursor {
+		0%, 50% { opacity: 1; }
+		51%, 100% { opacity: 0; }
+	}
+
+	.char-correct {
+		color: #4ade80;
+	}
+
+	.char-incorrect {
+		color: #ef4444;
+		background: #450a0a;
+		text-decoration: underline wavy #ef4444;
 	}
 </style>
 
