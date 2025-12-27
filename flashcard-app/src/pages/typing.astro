@@ -454,23 +454,19 @@ import Layout from '../layouts/Layout.astro';
 
 		renderTypedCode(typed) {
 			const display = document.getElementById('typed-display');
-			let html = '';
 			
-			for (let i = 0; i < typed.length; i++) {
-				const typedChar = typed[i];
-				const targetChar = this.currentCode[i];
-				
-				if (typedChar === targetChar) {
-					html += `<span class="char-correct">${this.escapeHtml(typedChar)}</span>`;
-				} else {
-					html += `<span class="char-incorrect">${this.escapeHtml(typedChar)}</span>`;
-				}
+			// Create a code element for Prism
+			const codeEl = document.createElement('code');
+			codeEl.className = 'language-python';
+			codeEl.textContent = typed;
+			
+			// Apply syntax highlighting
+			if (window.Prism) {
+				Prism.highlightElement(codeEl);
 			}
 			
-			// Add cursor
-			html += '<span class="cursor"></span>';
-			
-			display.innerHTML = html;
+			// Add cursor at the end
+			display.innerHTML = codeEl.innerHTML + '<span class="cursor"></span>';
 		}
 
 		escapeHtml(char) {
