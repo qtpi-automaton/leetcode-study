@@ -4,6 +4,7 @@ def binary_search(arr, target):
     left, right = 0, len(arr) - 1
 
     while left <= right:
+        # avoid overflow
         mid = left + (right - left) // 2
         if arr[mid] == target:
             return mid
@@ -12,7 +13,8 @@ def binary_search(arr, target):
         else:
             right = mid - 1
 
-    return -1  # or left for insertion point
+    # not found (or return left for insertion point)
+    return -1
 
 # Search on answer space
 def search_answer(lo, hi):

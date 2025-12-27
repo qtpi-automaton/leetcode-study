@@ -3,7 +3,8 @@
 import heapq
 
 def top_k_largest(nums, k):
-    heap = []  # min-heap of size k
+    # min-heap of size k
+    heap = []
     for num in nums:
         heapq.heappush(heap, num)
         if len(heap) > k:
@@ -11,7 +12,8 @@ def top_k_largest(nums, k):
     return heap
 
 def top_k_smallest(nums, k):
-    heap = []  # max-heap (negate values)
+    # max-heap (negate values)
+    heap = []
     for num in nums:
         heapq.heappush(heap, -num)
         if len(heap) > k:

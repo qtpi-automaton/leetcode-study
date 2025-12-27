@@ -3,7 +3,8 @@
 import heapq
 
 def merge_k_sorted(lists):
-    heap = []  # (value, list_idx, elem_idx)
+    # (value, list_idx, elem_idx)
+    heap = []
 
     for i, lst in enumerate(lists):
         if lst:

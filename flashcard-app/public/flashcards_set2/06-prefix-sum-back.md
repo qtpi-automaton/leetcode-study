@@ -6,6 +6,7 @@ def build_prefix(nums):
         prefix[i + 1] = prefix[i] + nums[i]
     return prefix
 
+# O(1) range query
 def range_sum(prefix, left, right):
     return prefix[right + 1] - prefix[left]
 

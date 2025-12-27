@@ -9,9 +9,11 @@ def two_pointers(arr, target):
         if curr == target:
             return [left, right]
         elif curr < target:
-            left += 1   # need larger
+            # need larger
+            left += 1
         else:
-            right -= 1  # need smaller
+            # need smaller
+            right -= 1
 
     return []
 ```

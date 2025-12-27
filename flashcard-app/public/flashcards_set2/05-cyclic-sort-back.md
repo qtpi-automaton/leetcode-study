@@ -3,7 +3,8 @@
 def cyclic_sort(nums):
     i = 0
     while i < len(nums):
-        correct = nums[i] - 1  # where it should be
+        # where this number should be
+        correct = nums[i] - 1
         if nums[i] != nums[correct]:
             nums[i], nums[correct] = nums[correct], nums[i]
         else:

@@ -2,7 +2,8 @@
 ```python
 def sliding_window(arr):
     left = 0
-    result = 0  # 0 for MAX, float('inf') for MIN
+    # 0 for MAX, float('inf') for MIN
+    result = 0
     window = {}
 
     for right in range(len(arr)):
@@ -18,7 +19,7 @@ def sliding_window(arr):
             left += 1
 
         # 3. UPDATE result
-        # result = max(result, right - left + 1)
+        result = max(result, right - left + 1)
 
     return result
 ```

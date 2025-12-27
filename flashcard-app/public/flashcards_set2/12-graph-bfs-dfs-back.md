@@ -19,15 +19,16 @@ def dfs(graph, node, visited):
         if nei not in visited:
             dfs(graph, nei, visited)
 
-# Grid: directions = [(0,1), (0,-1), (1,0), (-1,0)]
+# Grid: 4 directions
 def grid_bfs(grid, r, c):
     rows, cols = len(grid), len(grid[0])
+    directions = [(0,1), (0,-1), (1,0), (-1,0)]
     visited = {(r, c)}
     queue = deque([(r, c)])
 
     while queue:
         r, c = queue.popleft()
-        for dr, dc in [(0,1), (0,-1), (1,0), (-1,0)]:
+        for dr, dc in directions:
             nr, nc = r + dr, c + dc
             if 0 <= nr < rows and 0 <= nc < cols and (nr, nc) not in visited:
                 visited.add((nr, nc))

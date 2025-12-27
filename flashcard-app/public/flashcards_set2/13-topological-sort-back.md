@@ -10,6 +10,7 @@ def topo_sort(n, edges):
         graph[src].append(dst)
         indegree[dst] += 1
 
+    # start with nodes having no dependencies
     queue = deque([i for i in range(n) if indegree[i] == 0])
     result = []
 
@@ -21,5 +22,6 @@ def topo_sort(n, edges):
             if indegree[nei] == 0:
                 queue.append(nei)
 
+    # if result has all nodes, valid ordering exists
     return result if len(result) == n else []
 ```

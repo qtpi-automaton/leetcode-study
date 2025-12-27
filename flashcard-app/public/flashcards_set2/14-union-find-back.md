@@ -7,13 +7,15 @@ class UnionFind:
 
     def find(self, x):
         if self.parent[x] != x:
-            self.parent[x] = self.find(self.parent[x])  # path compression
+            # path compression
+            self.parent[x] = self.find(self.parent[x])
         return self.parent[x]
 
     def union(self, x, y):
         px, py = self.find(x), self.find(y)
         if px == py:
             return False
+        # union by rank
         if self.rank[px] < self.rank[py]:
             px, py = py, px
         self.parent[py] = px

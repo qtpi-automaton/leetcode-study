@@ -11,6 +11,7 @@ def level_order(root):
 
     while queue:
         level = []
+        # process entire level
         for _ in range(len(queue)):
             node = queue.popleft()
             level.append(node.val)
