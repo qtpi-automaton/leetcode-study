@@ -5,6 +5,6 @@ import { defineConfig } from 'astro/config';
 // Update YOUR_USERNAME below before deploying
 export default defineConfig({
   site: 'https://qtpi-automaton.github.io',
-  base: '/leetcode',
+  base: '/leetcode-study',
   output: 'static',
 });
