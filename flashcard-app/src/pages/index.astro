@@ -1,0 +1,753 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Flashcards">
+	<!-- KaTeX CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+	<!-- KaTeX JS -->
+	<script is:inline src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+	<!-- Prism.js for syntax highlighting -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" crossorigin="anonymous">
+	<script is:inline src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" crossorigin="anonymous"></script>
+	<script is:inline src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" crossorigin="anonymous"></script>
+	<main>
+		<div id="flashcard-app">
+			<div class="controls">
+				<div id="set-filters" class="set-filters">
+					<!-- Buttons will be dynamically generated -->
+				</div>
+				<div class="nav-controls">
+					<button id="shuffle-btn">🔀 Shuffle</button>
+					<button id="prev-btn">← Previous</button>
+					<button id="next-btn">Next →</button>
+					<span id="counter">1 / 0</span>
+				</div>
+			</div>
+			
+			<div class="flashcard-container">
+				<div id="flashcard" class="flashcard">
+					<div class="flashcard-content">
+						<div id="card-content">Loading flashcards...</div>
+					</div>
+					<button id="flip-btn" class="flip-btn">Flip Card</button>
+				</div>
+			</div>
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 100%;
+		max-width: 1000px;
+		color: white;
+		font-size: 16px;
+		line-height: 1.6;
+	}
+
+	#flashcard-app {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+	}
+
+	.controls {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		align-items: center;
+		width: 100%;
+	}
+
+	.set-filters {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.set-group {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		align-items: center;
+	}
+
+	.set-group-label {
+		font-size: 11px;
+		color: #9ca3af;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.set-group-buttons {
+		display: flex;
+		gap: 0.25rem;
+	}
+
+	.nav-controls {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.set-btn {
+		padding: 0.5rem 1rem;
+		background: #374151;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 13px;
+		transition: all 0.2s;
+	}
+
+	.set-btn:hover {
+		background: #4b5563;
+	}
+
+	.set-btn.active {
+		background: #7c3aed;
+		color: white;
+	}
+
+	.set-btn.sub-btn {
+		padding: 0.4rem 0.75rem;
+		font-size: 12px;
+		background: #1f2937;
+		border: 1px solid #374151;
+	}
+
+	.set-btn.sub-btn:hover {
+		background: #374151;
+	}
+
+	.set-btn.sub-btn.active {
+		background: #5b21b6;
+		border-color: #7c3aed;
+	}
+
+	.nav-controls button {
+		padding: 0.75rem 1.5rem;
+		background: #4f46e5;
+		color: white;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 14px;
+		transition: background-color 0.2s;
+	}
+
+	.nav-controls button:hover {
+		background: #3730a3;
+	}
+
+	#counter {
+		font-weight: bold;
+		color: #a1a1aa;
+	}
+
+	.flashcard-container {
+		width: 100%;
+		max-width: 800px;
+		perspective: 1000px;
+	}
+
+	.flashcard {
+		background: #1f2937;
+		border-radius: 12px;
+		padding: 2rem;
+		min-height: 400px;
+		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+		transition: transform 0.3s ease;
+		position: relative;
+	}
+
+	.flashcard:hover {
+		transform: translateY(-2px);
+	}
+
+	.flashcard-content {
+		min-height: 300px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	#card-content {
+		width: 100%;
+		text-align: left;
+	}
+
+	#card-content h1 {
+		color: #60a5fa;
+		margin-bottom: 1.5rem;
+		font-size: 1.5rem;
+	}
+
+	#card-content h2 {
+		color: #34d399;
+		margin: 1rem 0;
+	}
+
+	#card-content ul {
+		margin: 1rem 0;
+		padding-left: 1.5rem;
+	}
+
+	#card-content li {
+		margin: 0.5rem 0;
+	}
+
+	#card-content strong {
+		color: #fbbf24;
+	}
+
+	#card-content code {
+		background: #374151;
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-family: 'Courier New', monospace;
+		color: #f87171;
+	}
+
+	#card-content pre {
+		background: #111827;
+		padding: 1rem;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin: 1rem 0;
+		white-space: pre;
+		font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+		font-size: 14px;
+		line-height: 1.4;
+	}
+
+	#card-content pre code {
+		background: none;
+		padding: 0;
+		color: #e5e7eb;
+		white-space: pre;
+		font-family: inherit;
+		font-size: inherit;
+	}
+
+	.md-table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+		font-size: 14px;
+	}
+
+	.md-table th,
+	.md-table td {
+		border: 1px solid #374151;
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+	}
+
+	.md-table th {
+		background: #374151;
+		color: #60a5fa;
+		font-weight: 600;
+	}
+
+	.md-table td {
+		background: #1f2937;
+	}
+
+	.md-table tr:nth-child(even) td {
+		background: #111827;
+	}
+
+	.md-table tr:hover td {
+		background: #2d3748;
+	}
+
+	.latex-display {
+		display: block;
+		text-align: center;
+		margin: 1rem 0;
+		overflow-x: auto;
+	}
+
+	.latex-inline {
+		display: inline;
+	}
+
+	:global(.katex) {
+		color: #e5e7eb;
+		font-size: 1.1em;
+	}
+
+	.flip-btn {
+		position: absolute;
+		bottom: 1rem;
+		right: 1rem;
+		padding: 0.5rem 1rem;
+		background: #059669;
+		color: white;
+		border: none;
+		border-radius: 6px;
+		cursor: pointer;
+		font-size: 14px;
+		transition: background-color 0.2s;
+	}
+
+	.flip-btn:hover {
+		background: #047857;
+	}
+
+	.loading {
+		text-align: center;
+		color: #9ca3af;
+		font-style: italic;
+	}
+
+	.error {
+		text-align: center;
+		color: #ef4444;
+		background: #7f1d1d;
+		padding: 1rem;
+		border-radius: 8px;
+	}
+</style>
+
+<script>
+	class FlashcardApp {
+		constructor() {
+			this.allFlashcards = [];
+			this.flashcards = [];
+			this.currentIndex = 0;
+			this.showingFront = true;
+			this.currentFilter = 'all';
+			this.setStructure = {}; // { setName: { subcategories: [...], displayName: '...' } }
+			this.init();
+		}
+
+		async init() {
+			await this.loadFlashcards();
+			this.buildSetStructure();
+			this.renderFilterButtons();
+			this.setupEventListeners();
+			this.filterCards('all');
+		}
+
+		async loadFlashcards() {
+			try {
+				const response = await fetch('/api/flashcards.json');
+				if (!response.ok) {
+					throw new Error('Failed to fetch flashcard list');
+				}
+				
+				const flashcardList = await response.json();
+				const allCards = [];
+
+				for (const card of flashcardList) {
+					try {
+						const frontResponse = await fetch(card.frontFile);
+						const backResponse = await fetch(card.backFile);
+						
+						if (frontResponse.ok && backResponse.ok) {
+							const frontContent = await frontResponse.text();
+							const backContent = await backResponse.text();
+							
+							allCards.push({
+								id: card.id,
+								front: frontContent,
+								back: backContent,
+								set: card.set,
+								setNumber: card.setNumber,
+								setName: card.setName,
+								subcategory: card.subcategory,
+								topic: card.baseName
+							});
+						}
+					} catch (error) {
+						console.warn(`Failed to load ${card.id}:`, error);
+					}
+				}
+
+				this.allFlashcards = allCards;
+				console.log(`Loaded ${this.allFlashcards.length} flashcards`);
+			} catch (error) {
+				console.error('Failed to load flashcards:', error);
+				document.getElementById('card-content').innerHTML = 
+					'<div class="error">Failed to load flashcards. Please check the console for details.</div>';
+			}
+		}
+
+		buildSetStructure() {
+			// Build structure: { set0: { subcategories: ['time', 'space'], ... }, set1: { subcategories: ['arrays', ...] } }
+			this.setStructure = {};
+			
+			for (const card of this.allFlashcards) {
+				const setName = card.setName;
+				if (!this.setStructure[setName]) {
+					this.setStructure[setName] = {
+						setNumber: card.setNumber,
+						subcategories: new Set()
+					};
+				}
+				if (card.subcategory) {
+					this.setStructure[setName].subcategories.add(card.subcategory);
+				}
+			}
+
+			// Convert sets to arrays and sort
+			for (const setName in this.setStructure) {
+				this.setStructure[setName].subcategories = 
+					Array.from(this.setStructure[setName].subcategories).sort();
+			}
+		}
+
+		renderFilterButtons() {
+			const container = document.getElementById('set-filters');
+			container.innerHTML = '';
+
+			// All Sets button
+			const allBtn = document.createElement('button');
+			allBtn.className = 'set-btn active';
+			allBtn.textContent = 'All Sets';
+			allBtn.dataset.filter = 'all';
+			container.appendChild(allBtn);
+
+			// Get sorted set names
+			const sortedSets = Object.keys(this.setStructure).sort((a, b) => {
+				const numA = parseInt(a.replace('set', ''));
+				const numB = parseInt(b.replace('set', ''));
+				return numA - numB;
+			});
+
+			for (const setName of sortedSets) {
+				const setInfo = this.setStructure[setName];
+				const subcats = setInfo.subcategories;
+
+				if (subcats.length <= 1) {
+					// Single button for sets without multiple subcategories
+					const btn = document.createElement('button');
+					btn.className = 'set-btn';
+					const displayName = this.getSetDisplayName(setName, subcats[0]);
+					btn.textContent = displayName;
+					btn.dataset.filter = subcats[0] ? `${setName}:${subcats[0]}` : setName;
+					container.appendChild(btn);
+				} else {
+					// Group with "All" + subcategory buttons
+					const group = document.createElement('div');
+					group.className = 'set-group';
+
+					const label = document.createElement('div');
+					label.className = 'set-group-label';
+					label.textContent = this.getSetLabel(setName);
+					group.appendChild(label);
+
+					const btnGroup = document.createElement('div');
+					btnGroup.className = 'set-group-buttons';
+
+					// "All" button for this set
+					const allSetBtn = document.createElement('button');
+					allSetBtn.className = 'set-btn';
+					allSetBtn.textContent = 'All';
+					allSetBtn.dataset.filter = `${setName}:all`;
+					btnGroup.appendChild(allSetBtn);
+
+					// Subcategory buttons
+					for (const subcat of subcats) {
+						const subBtn = document.createElement('button');
+						subBtn.className = 'set-btn sub-btn';
+						subBtn.textContent = this.formatSubcategory(subcat);
+						subBtn.dataset.filter = `${setName}:${subcat}`;
+						btnGroup.appendChild(subBtn);
+					}
+
+					group.appendChild(btnGroup);
+					container.appendChild(group);
+				}
+			}
+		}
+
+		getSetDisplayName(setName, subcategory) {
+			const num = setName.replace('set', '');
+			if (num === '0' && subcategory === 'time') return 'Set 0 (Time)';
+			if (num === '0' && subcategory === 'space') return 'Set 0 (Space)';
+			if (num === '1') return `Set 1 (${this.formatSubcategory(subcategory || 'Recognition')})`;
+			if (num === '2') return 'Set 2 (Mechanics)';
+			return `Set ${num}${subcategory ? ` (${this.formatSubcategory(subcategory)})` : ''}`;
+		}
+
+		getSetLabel(setName) {
+			const num = setName.replace('set', '');
+			if (num === '0') return 'Set 0 (Complexity)';
+			if (num === '1') return 'Set 1 (Recognition)';
+			if (num === '2') return 'Set 2 (Mechanics)';
+			return `Set ${num}`;
+		}
+
+		formatSubcategory(subcat) {
+			if (!subcat) return '';
+			return subcat.charAt(0).toUpperCase() + subcat.slice(1);
+		}
+
+		setupEventListeners() {
+			document.getElementById('flip-btn').addEventListener('click', () => this.flipCard());
+			document.getElementById('next-btn').addEventListener('click', () => this.nextCard());
+			document.getElementById('prev-btn').addEventListener('click', () => this.prevCard());
+			document.getElementById('shuffle-btn').addEventListener('click', () => this.shuffle());
+			
+			// Dynamic filter buttons
+			document.getElementById('set-filters').addEventListener('click', (e) => {
+				if (e.target.classList.contains('set-btn')) {
+					this.filterCards(e.target.dataset.filter);
+				}
+			});
+			
+			// Keyboard shortcuts
+			document.addEventListener('keydown', (e) => {
+				switch(e.key) {
+					case ' ':
+					case 'Enter':
+						e.preventDefault();
+						this.flipCard();
+						break;
+					case 'ArrowRight':
+					case 'n':
+						this.nextCard();
+						break;
+					case 'ArrowLeft':
+					case 'p':
+						this.prevCard();
+						break;
+					case 's':
+						this.shuffle();
+						break;
+					case 'a':
+						this.filterCards('all');
+						break;
+				}
+			});
+		}
+
+		filterCards(filter) {
+			// Update active button
+			document.querySelectorAll('.set-btn').forEach(btn => {
+				btn.classList.toggle('active', btn.dataset.filter === filter);
+			});
+
+			if (filter === 'all') {
+				this.flashcards = [...this.allFlashcards];
+			} else if (filter.includes(':')) {
+				const [setName, subcat] = filter.split(':');
+				if (subcat === 'all') {
+					// All cards in this set (any subcategory)
+					this.flashcards = this.allFlashcards.filter(card => card.setName === setName);
+				} else {
+					// Specific subcategory
+					this.flashcards = this.allFlashcards.filter(
+						card => card.setName === setName && card.subcategory === subcat
+					);
+				}
+			} else {
+				// Just set name, no subcategory
+				this.flashcards = this.allFlashcards.filter(card => card.setName === filter);
+			}
+			
+			this.currentFilter = filter;
+			this.currentIndex = 0;
+			this.showingFront = true;
+			this.displayCurrentCard();
+		}
+
+		displayCurrentCard() {
+			if (this.flashcards.length === 0) {
+				document.getElementById('card-content').innerHTML = 
+					'<div class="loading">No flashcards found</div>';
+				document.getElementById('counter').textContent = '0 / 0';
+				return;
+			}
+
+			const card = this.flashcards[this.currentIndex];
+			const content = this.showingFront ? card.front : card.back;
+			
+			const htmlContent = this.markdownToHtml(content);
+			document.getElementById('card-content').innerHTML = htmlContent;
+			
+			this.renderLatex();
+			
+			document.getElementById('counter').textContent = 
+				`${this.currentIndex + 1} / ${this.flashcards.length}`;
+		}
+
+		markdownToHtml(markdown) {
+			const codeBlocks = [];
+			let codeBlockIndex = 0;
+			
+			let processedMarkdown = markdown.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+				const placeholder = `__CODE_BLOCK_${codeBlockIndex}__`;
+				codeBlocks[codeBlockIndex] = { lang: lang || 'python', code: code };
+				codeBlockIndex++;
+				return placeholder;
+			});
+
+			const tables = [];
+			let tableIndex = 0;
+			processedMarkdown = processedMarkdown.replace(/\n(\|.+\|)\n(\|[-:\s|]+\|)\n((?:\|.+\|\n?)+)/g, (match, header, separator, body) => {
+				const placeholder = `__TABLE_${tableIndex}__`;
+				tables[tableIndex] = { header, separator, body };
+				tableIndex++;
+				return '\n' + placeholder + '\n';
+			});
+
+			const latexBlocks = [];
+			let latexBlockIndex = 0;
+			
+			processedMarkdown = processedMarkdown.replace(/\$\$([\s\S]*?)\$\$/g, (match, latex) => {
+				const placeholder = `__LATEX_DISPLAY_${latexBlockIndex}__`;
+				latexBlocks[latexBlockIndex] = { type: 'display', latex: latex.trim() };
+				latexBlockIndex++;
+				return placeholder;
+			});
+			
+			processedMarkdown = processedMarkdown.replace(/(?<!\\)\$([^\$\n]+?)\$/g, (match, latex) => {
+				const placeholder = `__LATEX_INLINE_${latexBlockIndex}__`;
+				latexBlocks[latexBlockIndex] = { type: 'inline', latex: latex.trim() };
+				latexBlockIndex++;
+				return placeholder;
+			});
+			
+			processedMarkdown = processedMarkdown
+				.replace(/^# (.*$)/gm, '<h1>$1</h1>')
+				.replace(/^## (.*$)/gm, '<h2>$1</h2>')
+				.replace(/^\* (.*$)/gm, '<li>$1</li>')
+				.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+				.replace(/`([^`]+)`/g, '<code>$1</code>')
+				.replace(/\n\n/g, '</p><p>')
+				.replace(/^(?!<[h|l|p|_])(.+)$/gm, '<p>$1</p>')
+				.replace(/<p><li>/g, '<ul><li>')
+				.replace(/<\/li><\/p>/g, '</li></ul>');
+			
+			codeBlocks.forEach((block, index) => {
+				const placeholder = `__CODE_BLOCK_${index}__`;
+				const formattedCode = this.escapeHtml(block.code);
+				processedMarkdown = processedMarkdown.replace(
+					placeholder, 
+					`<pre><code class="language-${block.lang}">${formattedCode}</code></pre>`
+				);
+			});
+
+			tables.forEach((table, index) => {
+				const placeholder = `__TABLE_${index}__`;
+				const tableHtml = this.parseTable(table.header, table.separator, table.body);
+				processedMarkdown = processedMarkdown.replace(placeholder, tableHtml);
+			});
+
+			latexBlocks.forEach((block, index) => {
+				const placeholder = block.type === 'display' 
+					? `__LATEX_DISPLAY_${index}__` 
+					: `__LATEX_INLINE_${index}__`;
+				const spanClass = block.type === 'display' ? 'latex-display' : 'latex-inline';
+				processedMarkdown = processedMarkdown.replace(
+					placeholder,
+					`<span class="${spanClass}" data-latex="${this.escapeHtml(block.latex)}"></span>`
+				);
+			});
+			
+			return processedMarkdown;
+		}
+
+		escapeHtml(text) {
+			const div = document.createElement('div');
+			div.textContent = text;
+			return div.innerHTML;
+		}
+
+		parseTable(header, separator, body) {
+			const parseRow = (row) => row.split('|').slice(1, -1).map(cell => cell.trim());
+			
+			const headerCells = parseRow(header);
+			const bodyRows = body.trim().split('\n').map(parseRow);
+			
+			let html = '<table class="md-table"><thead><tr>';
+			headerCells.forEach(cell => { html += `<th>${cell}</th>`; });
+			html += '</tr></thead><tbody>';
+			
+			bodyRows.forEach(row => {
+				html += '<tr>';
+				row.forEach(cell => { html += `<td>${cell}</td>`; });
+				html += '</tr>';
+			});
+			
+			html += '</tbody></table>';
+			return html;
+		}
+
+		renderLatex() {
+			document.querySelectorAll('.latex-display').forEach(el => {
+				const latex = el.getAttribute('data-latex');
+				if (latex && window.katex) {
+					try {
+						window.katex.render(latex, el, { displayMode: true, throwOnError: false });
+					} catch (e) {
+						el.textContent = latex;
+					}
+				}
+			});
+			
+			document.querySelectorAll('.latex-inline').forEach(el => {
+				const latex = el.getAttribute('data-latex');
+				if (latex && window.katex) {
+					try {
+						window.katex.render(latex, el, { displayMode: false, throwOnError: false });
+					} catch (e) {
+						el.textContent = latex;
+					}
+				}
+			});
+
+			// Syntax highlighting for code blocks
+			if (window.Prism) {
+				window.Prism.highlightAll();
+			}
+		}
+
+		flipCard() {
+			this.showingFront = !this.showingFront;
+			this.displayCurrentCard();
+		}
+
+		nextCard() {
+			this.currentIndex = (this.currentIndex + 1) % this.flashcards.length;
+			this.showingFront = true;
+			this.displayCurrentCard();
+		}
+
+		prevCard() {
+			this.currentIndex = this.currentIndex === 0 ? 
+				this.flashcards.length - 1 : this.currentIndex - 1;
+			this.showingFront = true;
+			this.displayCurrentCard();
+		}
+
+		shuffle() {
+			const cardsToShuffle = [...this.flashcards];
+			for (let i = cardsToShuffle.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[cardsToShuffle[i], cardsToShuffle[j]] = [cardsToShuffle[j], cardsToShuffle[i]];
+			}
+			this.flashcards = cardsToShuffle;
+			this.currentIndex = 0;
+			this.showingFront = true;
+			this.displayCurrentCard();
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		new FlashcardApp();
+	});
+</script>
+</Layout>
