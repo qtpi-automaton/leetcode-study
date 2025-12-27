@@ -1,8 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title="Flashcards">
+	<script is:inline define:vars={{ base }}>
+		window.__BASE_URL__ = base;
+	</script>
 	<!-- KaTeX CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
 	<!-- KaTeX JS -->
@@ -341,7 +345,9 @@ import Layout from '../layouts/Layout.astro';
 
 		async loadFlashcards() {
 			try {
-				const response = await fetch('/api/flashcards.json');
+				// Get base path injected from Astro
+				const base = window.__BASE_URL__ || '/';
+				const response = await fetch(`${base}api/flashcards.json`);
 				if (!response.ok) {
 					throw new Error('Failed to fetch flashcard list');
 				}
@@ -351,8 +357,8 @@ import Layout from '../layouts/Layout.astro';
 
 				for (const card of flashcardList) {
 					try {
-						const frontResponse = await fetch(card.frontFile);
-						const backResponse = await fetch(card.backFile);
+						const frontResponse = await fetch(`${base}${card.frontFile.slice(1)}`);
+						const backResponse = await fetch(`${base}${card.backFile.slice(1)}`);
 						
 						if (frontResponse.ok && backResponse.ok) {
 							const frontContent = await frontResponse.text();
