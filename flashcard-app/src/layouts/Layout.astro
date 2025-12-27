@@ -4,6 +4,7 @@ export interface Props {
 }
 
 const { title } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -17,6 +18,11 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
+		<nav class="main-nav">
+			<a href={base} class:list={[{ active: title === 'Flashcards' }]}>Flashcards</a>
+			<a href={`${base}typing`} class:list={[{ active: title === 'Typing Practice' }]}>Typing</a>
+			<a href={`${base}practice`} class:list={[{ active: title === 'Practice Problems' }]}>Practice</a>
+		</nav>
 		<slot />
 	</body>
 </html>
@@ -32,6 +38,34 @@ const { title } = Astro.props;
 		padding: 0;
 		min-height: 100vh;
 		background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+	}
+
+	.main-nav {
+		display: flex;
+		justify-content: center;
+		gap: 2rem;
+		padding: 1rem;
+		background: #1e293b;
+		border-bottom: 1px solid #334155;
+	}
+
+	.main-nav a {
+		color: #94a3b8;
+		text-decoration: none;
+		font-weight: 500;
+		padding: 0.5rem 1rem;
+		border-radius: 6px;
+		transition: all 0.2s;
+	}
+
+	.main-nav a:hover {
+		color: #e2e8f0;
+		background: #334155;
+	}
+
+	.main-nav a.active {
+		color: #60a5fa;
+		background: #1e3a5f;
 	}
 	
 	code {

@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const patterns = [
+	{
+		name: "Sliding Window",
+		problems: [
+			{ name: "Longest Substring Without Repeating Characters", url: "https://leetcode.com/problems/longest-substring-without-repeating-characters/" },
+			{ name: "Minimum Window Substring", url: "https://leetcode.com/problems/minimum-window-substring/" },
+			{ name: "Longest Repeating Character Replacement", url: "https://leetcode.com/problems/longest-repeating-character-replacement/" },
+			{ name: "Permutation in String", url: "https://leetcode.com/problems/permutation-in-string/" },
+		]
+	},
+	{
+		name: "Two Pointers",
+		problems: [
+			{ name: "Two Sum II", url: "https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" },
+			{ name: "3Sum", url: "https://leetcode.com/problems/3sum/" },
+			{ name: "Container With Most Water", url: "https://leetcode.com/problems/container-with-most-water/" },
+			{ name: "Trapping Rain Water", url: "https://leetcode.com/problems/trapping-rain-water/" },
+		]
+	},
+	{
+		name: "Fast & Slow Pointers",
+		problems: [
+			{ name: "Linked List Cycle", url: "https://leetcode.com/problems/linked-list-cycle/" },
+			{ name: "Linked List Cycle II", url: "https://leetcode.com/problems/linked-list-cycle-ii/" },
+			{ name: "Happy Number", url: "https://leetcode.com/problems/happy-number/" },
+			{ name: "Middle of the Linked List", url: "https://leetcode.com/problems/middle-of-the-linked-list/" },
+		]
+	},
+	{
+		name: "Merge Intervals",
+		problems: [
+			{ name: "Merge Intervals", url: "https://leetcode.com/problems/merge-intervals/" },
+			{ name: "Insert Interval", url: "https://leetcode.com/problems/insert-interval/" },
+			{ name: "Non-overlapping Intervals", url: "https://leetcode.com/problems/non-overlapping-intervals/" },
+			{ name: "Meeting Rooms II", url: "https://leetcode.com/problems/meeting-rooms-ii/" },
+		]
+	},
+	{
+		name: "Cyclic Sort",
+		problems: [
+			{ name: "Missing Number", url: "https://leetcode.com/problems/missing-number/" },
+			{ name: "Find All Numbers Disappeared in an Array", url: "https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/" },
+			{ name: "Find the Duplicate Number", url: "https://leetcode.com/problems/find-the-duplicate-number/" },
+			{ name: "First Missing Positive", url: "https://leetcode.com/problems/first-missing-positive/" },
+		]
+	},
+	{
+		name: "Prefix Sum",
+		problems: [
+			{ name: "Subarray Sum Equals K", url: "https://leetcode.com/problems/subarray-sum-equals-k/" },
+			{ name: "Contiguous Array", url: "https://leetcode.com/problems/contiguous-array/" },
+			{ name: "Product of Array Except Self", url: "https://leetcode.com/problems/product-of-array-except-self/" },
+			{ name: "Range Sum Query - Immutable", url: "https://leetcode.com/problems/range-sum-query-immutable/" },
+		]
+	},
+	{
+		name: "Binary Search",
+		problems: [
+			{ name: "Binary Search", url: "https://leetcode.com/problems/binary-search/" },
+			{ name: "Search in Rotated Sorted Array", url: "https://leetcode.com/problems/search-in-rotated-sorted-array/" },
+			{ name: "Find Minimum in Rotated Sorted Array", url: "https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" },
+			{ name: "Koko Eating Bananas", url: "https://leetcode.com/problems/koko-eating-bananas/" },
+		]
+	},
+	{
+		name: "Top K Elements",
+		problems: [
+			{ name: "Kth Largest Element in an Array", url: "https://leetcode.com/problems/kth-largest-element-in-an-array/" },
+			{ name: "Top K Frequent Elements", url: "https://leetcode.com/problems/top-k-frequent-elements/" },
+			{ name: "K Closest Points to Origin", url: "https://leetcode.com/problems/k-closest-points-to-origin/" },
+			{ name: "Find K Pairs with Smallest Sums", url: "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/" },
+		]
+	},
+	{
+		name: "K-Way Merge",
+		problems: [
+			{ name: "Merge k Sorted Lists", url: "https://leetcode.com/problems/merge-k-sorted-lists/" },
+			{ name: "Kth Smallest Element in a Sorted Matrix", url: "https://leetcode.com/problems/kth-smallest-element-in-a-sorted-matrix/" },
+			{ name: "Find K Pairs with Smallest Sums", url: "https://leetcode.com/problems/find-k-pairs-with-smallest-sums/" },
+			{ name: "Smallest Range Covering Elements from K Lists", url: "https://leetcode.com/problems/smallest-range-covering-elements-from-k-lists/" },
+		]
+	},
+	{
+		name: "Tree BFS",
+		problems: [
+			{ name: "Binary Tree Level Order Traversal", url: "https://leetcode.com/problems/binary-tree-level-order-traversal/" },
+			{ name: "Binary Tree Zigzag Level Order Traversal", url: "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/" },
+			{ name: "Binary Tree Right Side View", url: "https://leetcode.com/problems/binary-tree-right-side-view/" },
+			{ name: "Average of Levels in Binary Tree", url: "https://leetcode.com/problems/average-of-levels-in-binary-tree/" },
+		]
+	},
+	{
+		name: "Tree DFS",
+		problems: [
+			{ name: "Path Sum", url: "https://leetcode.com/problems/path-sum/" },
+			{ name: "Path Sum II", url: "https://leetcode.com/problems/path-sum-ii/" },
+			{ name: "Maximum Depth of Binary Tree", url: "https://leetcode.com/problems/maximum-depth-of-binary-tree/" },
+			{ name: "Diameter of Binary Tree", url: "https://leetcode.com/problems/diameter-of-binary-tree/" },
+		]
+	},
+	{
+		name: "Graph BFS/DFS",
+		problems: [
+			{ name: "Number of Islands", url: "https://leetcode.com/problems/number-of-islands/" },
+			{ name: "Clone Graph", url: "https://leetcode.com/problems/clone-graph/" },
+			{ name: "Pacific Atlantic Water Flow", url: "https://leetcode.com/problems/pacific-atlantic-water-flow/" },
+			{ name: "Word Search", url: "https://leetcode.com/problems/word-search/" },
+		]
+	},
+	{
+		name: "Topological Sort",
+		problems: [
+			{ name: "Course Schedule", url: "https://leetcode.com/problems/course-schedule/" },
+			{ name: "Course Schedule II", url: "https://leetcode.com/problems/course-schedule-ii/" },
+			{ name: "Alien Dictionary", url: "https://leetcode.com/problems/alien-dictionary/" },
+			{ name: "Sequence Reconstruction", url: "https://leetcode.com/problems/sequence-reconstruction/" },
+		]
+	},
+	{
+		name: "Union Find",
+		problems: [
+			{ name: "Number of Connected Components", url: "https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph/" },
+			{ name: "Graph Valid Tree", url: "https://leetcode.com/problems/graph-valid-tree/" },
+			{ name: "Redundant Connection", url: "https://leetcode.com/problems/redundant-connection/" },
+			{ name: "Accounts Merge", url: "https://leetcode.com/problems/accounts-merge/" },
+		]
+	},
+	{
+		name: "Dynamic Programming",
+		problems: [
+			{ name: "Climbing Stairs", url: "https://leetcode.com/problems/climbing-stairs/" },
+			{ name: "House Robber", url: "https://leetcode.com/problems/house-robber/" },
+			{ name: "Coin Change", url: "https://leetcode.com/problems/coin-change/" },
+			{ name: "Longest Increasing Subsequence", url: "https://leetcode.com/problems/longest-increasing-subsequence/" },
+		]
+	},
+];
+---
+
+<Layout title="Practice Problems">
+	<main>
+		<h1>Practice Problems</h1>
+		<p class="subtitle">Curated LeetCode problems organized by pattern</p>
+		
+		<div class="patterns-grid">
+			{patterns.map((pattern) => (
+				<div class="pattern-card">
+					<h2>{pattern.name}</h2>
+					<ul>
+						{pattern.problems.map((problem) => (
+							<li>
+								<a href={problem.url} target="_blank" rel="noopener noreferrer">
+									{problem.name} ↗
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))}
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1.5rem;
+		max-width: 1200px;
+		color: white;
+	}
+
+	h1 {
+		text-align: center;
+		color: #60a5fa;
+		margin-bottom: 0.5rem;
+	}
+
+	.subtitle {
+		text-align: center;
+		color: #9ca3af;
+		margin-bottom: 2rem;
+	}
+
+	.patterns-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.pattern-card {
+		background: #1f2937;
+		border-radius: 8px;
+		padding: 1.25rem;
+	}
+
+	.pattern-card h2 {
+		color: #34d399;
+		font-size: 1.1rem;
+		margin-bottom: 0.75rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid #374151;
+	}
+
+	.pattern-card ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.pattern-card li {
+		margin: 0.5rem 0;
+	}
+
+	.pattern-card a {
+		color: #93c5fd;
+		text-decoration: none;
+		font-size: 0.95rem;
+		transition: color 0.2s;
+	}
+
+	.pattern-card a:hover {
+		color: #60a5fa;
+		text-decoration: underline;
+	}
+</style>
+</Layout>
