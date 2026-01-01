@@ -1,24 +1,28 @@
 **Back (The Answer):**
 ```python
-def sliding_window(arr):
+def sliding_window_template(arr):
     left = 0
-    # MAX: result = 0 | MIN: result = float('inf')
-    result = 0
     window = {}
-
+    result = INITIAL_VALUE
+    
     for right in range(len(arr)):
-        # EXPAND
-        window[arr[right]] = window.get(arr[right], 0) + 1
-
-        # SHRINK: MAX = while INVALID | MIN = while VALID
+        # 1. EXPAND
+        right_element = arr[right]
+        window[right_element] = window.get(right_element, 0) + 1
+        
+        # 2. SHRINK based on CONDITION
         while CONDITION(window):
-            # MIN only: result = min(result, right - left + 1)
-            window[arr[left]] -= 1
-            if window[arr[left]] == 0:
-                del window[arr[left]]
+            # 3a. Update BEFORE shrinking
+                        
+            left_element = arr[left]
+            window[left_element] -= 1
+            if window[left_element] == 0:
+                del window[left_element]
             left += 1
-
-        # MAX only: result = max(result, right - left + 1)
-
+        
+        # 3b. Update AFTER shrinking
+    
     return result
 ```
+
+**Key insight:** MIN problems update result BEFORE shrinking (while valid), MAX problems update result AFTER shrinking (while invalid).
