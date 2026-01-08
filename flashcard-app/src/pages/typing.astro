@@ -513,24 +513,6 @@ import Layout from '../layouts/Layout.astro';
 				} catch (error) {
 					console.warn('Failed to load typing patterns:', error);
 				}
-					foundPatterns.sort((a, b) => {
-						if (a.isUnified && !b.isUnified) return -1;
-						if (!a.isUnified && b.isUnified) return 1;
-						return a.filename.localeCompare(b.filename);
-					});
-					
-					// Add to patterns array
-					foundPatterns.forEach(pattern => {
-						this.patterns.push({
-							name: pattern.name,
-							code: pattern.code,
-							codeNoComments: this.removeComments(pattern.code)
-						});
-					});
-					
-				} catch (error) {
-					console.warn('Failed to load typing patterns:', error);
-				}
 				
 				// Also load existing flashcard patterns as fallback
 				try {

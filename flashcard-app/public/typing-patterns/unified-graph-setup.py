@@ -10,8 +10,8 @@ class UnifiedGraphSolver:
     def _is_valid(self, *args): return True
     def _process_node(self, *args): pass
     
-    def _init_result(self, *args): return args[0]
-    def _update_result(self, *args): return args[0]
+    def _init_result(self, visited): return visited
+    def _update_result(self, result): return result
     def _is_multi_source(self): return False
 
     def _check_visited(self, visited, node):
