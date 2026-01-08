@@ -426,10 +426,6 @@ import Layout from '../layouts/Layout.astro';
 			try {
 				const base = window.__BASE_URL__ || '/';
 				
-		async loadPatterns() {
-			try {
-				const base = window.__BASE_URL__ || '/';
-				
 				// Auto-discover .py files in typing-patterns folder
 				try {
 					// Try to load the patterns.json for custom metadata (optional)
@@ -453,6 +449,7 @@ import Layout from '../layouts/Layout.astro';
 						'unified-backtracking.py',
 						'unified-binary-search.py',
 						'unified-dynamic-programming.py',
+						'unified-graph-setup.py',
 						'unified-graph-solver.py',
 						'unified-graph-solver-bfs.py',
 						'unified-graph-solver-dfs.py',
@@ -498,6 +495,24 @@ import Layout from '../layouts/Layout.astro';
 					}
 					
 					// Sort: unified patterns first (alphabetically), then non-unified (alphabetically)
+					foundPatterns.sort((a, b) => {
+						if (a.isUnified && !b.isUnified) return -1;
+						if (!a.isUnified && b.isUnified) return 1;
+						return a.filename.localeCompare(b.filename);
+					});
+					
+					// Add to patterns array
+					foundPatterns.forEach(pattern => {
+						this.patterns.push({
+							name: pattern.name,
+							code: pattern.code,
+							codeNoComments: this.removeComments(pattern.code)
+						});
+					});
+					
+				} catch (error) {
+					console.warn('Failed to load typing patterns:', error);
+				}
 					foundPatterns.sort((a, b) => {
 						if (a.isUnified && !b.isUnified) return -1;
 						if (!a.isUnified && b.isUnified) return 1;
