@@ -426,75 +426,93 @@ import Layout from '../layouts/Layout.astro';
 			try {
 				const base = window.__BASE_URL__ || '/';
 				
+		async loadPatterns() {
+			try {
+				const base = window.__BASE_URL__ || '/';
+				
 				// Auto-discover .py files in typing-patterns folder
 				try {
-					// Try to load the patterns.json for ordering and metadata
-					let patternsList = [];
+					// Try to load the patterns.json for custom metadata (optional)
+					let customPatterns = {};
 					try {
 						const patternsResponse = await fetch(`${base}typing-patterns/patterns.json`);
 						if (patternsResponse.ok) {
-							patternsList = await patternsResponse.json();
+							const patternsList = await patternsResponse.json();
+							// Create lookup for custom names/descriptions
+							patternsList.forEach(p => {
+								customPatterns[p.file] = p;
+							});
 						}
 					} catch (e) {
-						console.log('No patterns.json found, will auto-discover all .py files');
+						console.log('No patterns.json found, using auto-discovery');
 					}
 					
-					// Get all .py files by trying common pattern names (unified ones first)
-					const commonPatterns = [
+					// Auto-discover all .py files by trying a comprehensive list
+					const potentialFiles = [
+						// Unified patterns (will be sorted alphabetically)
+						'unified-backtracking.py',
+						'unified-binary-search.py',
+						'unified-dynamic-programming.py',
 						'unified-graph-solver.py',
 						'unified-graph-solver-bfs.py',
 						'unified-graph-solver-dfs.py',
-						'sliding-window.py',
-						'two-pointers.py',
-						'fast-slow-pointers.py',
-						'binary-search.py',
+						'unified-heap.py',
+						'unified-sliding-window.py',
+						'unified-trie.py',
+						'unified-two-pointers.py',
+						'unified-union-find.py',
+						// Non-unified patterns
 						'backtracking.py',
+						'binary-search.py',
 						'dynamic-programming.py',
+						'fast-slow-pointers.py',
+						'graph-traversal.py',
 						'heap.py',
+						'sliding-window.py',
 						'trie.py',
+						'two-pointers.py',
 						'union-find.py'
 					];
 					
-					const loadedFiles = new Set();
+					const foundPatterns = [];
 					
-					// First load patterns from patterns.json (if exists) to preserve order
-					for (const pattern of patternsList) {
+					// Check which files actually exist
+					for (const filename of potentialFiles) {
 						try {
-							const codeResponse = await fetch(`${base}typing-patterns/${pattern.file}`);
+							const codeResponse = await fetch(`${base}typing-patterns/${filename}`);
 							if (codeResponse.ok) {
 								const code = await codeResponse.text();
-								this.patterns.push({
-									name: pattern.name,
+								const customInfo = customPatterns[filename];
+								const name = customInfo?.name || this.formatPatternName(filename);
+								
+								foundPatterns.push({
+									filename,
+									name,
 									code: code.trim(),
-									codeNoComments: this.removeComments(code.trim())
+									isUnified: filename.startsWith('unified-')
 								});
-								loadedFiles.add(pattern.file);
 							}
 						} catch (e) {
-							console.warn(`Failed to load pattern ${pattern.name}`);
+							// File doesn't exist, skip silently
 						}
 					}
 					
-					// Then auto-discover any additional .py files
-					for (const filename of commonPatterns) {
-						if (!loadedFiles.has(filename)) {
-							try {
-								const codeResponse = await fetch(`${base}typing-patterns/${filename}`);
-								if (codeResponse.ok) {
-									const code = await codeResponse.text();
-									const name = this.formatPatternName(filename);
-									this.patterns.push({
-										name: name,
-										code: code.trim(),
-										codeNoComments: this.removeComments(code.trim())
-									});
-									loadedFiles.add(filename);
-								}
-							} catch (e) {
-								// File doesn't exist, skip silently
-							}
-						}
-					}
+					// Sort: unified patterns first (alphabetically), then non-unified (alphabetically)
+					foundPatterns.sort((a, b) => {
+						if (a.isUnified && !b.isUnified) return -1;
+						if (!a.isUnified && b.isUnified) return 1;
+						return a.filename.localeCompare(b.filename);
+					});
+					
+					// Add to patterns array
+					foundPatterns.forEach(pattern => {
+						this.patterns.push({
+							name: pattern.name,
+							code: pattern.code,
+							codeNoComments: this.removeComments(pattern.code)
+						});
+					});
+					
 				} catch (error) {
 					console.warn('Failed to load typing patterns:', error);
 				}
