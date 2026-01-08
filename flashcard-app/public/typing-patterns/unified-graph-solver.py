@@ -5,7 +5,7 @@ class UnifiedGraphSolver:
         visited = ({} if track_meta else set()) if use_visited else None
         result = self._init_result(visited)
         all_starts = self._get_start_points(data)
-        
+
         if mode == Mode.BFS and self._is_multi_source():
             self._bfs(all_starts, data, visited, track_meta)
         else:

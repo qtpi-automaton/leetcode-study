@@ -8,11 +8,11 @@ class UnifiedGraphSolver:
             container.append((node, 0))
 
         while container:
-            curr, level = container.popleft() 
+            curr, level = container.popleft()
             self._process_node(curr, level)
-            
+
             for neighbor in self._get_neighbors(curr, data):
                 if self._is_valid(neighbor, data) and not self._check_visited(visited, neighbor):
                     self._mark(visited, neighbor, curr, track_meta)
-                    container.append((neighbor, level + 1)) 
+                    container.append((neighbor, level + 1))
 
