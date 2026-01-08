@@ -1,19 +1,18 @@
 from collections import deque
 
-class UnifiedGraphSolver:
-    def solve(self, data, mode="bfs", track_meta=False, use_visited=True, is_multi_source=False):
-        visited = ({} if track_meta else set()) if use_visited else None
+class GraphSolver:
+    def solve(self, graph, mode="BFS", is_multi_source=False, in_place=False, track_meta=False):
+        visited = self._init_visited(track_meta, in_place)
         result = self._init_result(visited)
-        all_starts = self._get_start_points(data)
-
-        if mode == "bfs" and is_multi_source:
-            self._bfs(all_starts, data, visited, track_meta)
+        start_nodes = self._get_start_nodes(graph)
+        
+        if mode == "BFS" and is_multi_source:
+            self._bfs(graph, start_nodes, visited, track_meta)
         else:
-            for start in all_starts:
-                if not self._check_visited(visited, start):
+            for start_node in start_nodes:
+                if not self._check_visited(visited, start_node):
                     result = self._update_result(result)
-                    nodes = [start]
-                    if mode == "bfs": self._bfs(nodes, data, visited, track_meta)
-                    else:                self._dfs(nodes, data, visited, track_meta)
+                    if mode == "BFS": self._bfs(graph, [start_node], visited, track_meta)
+                    else:             self._dfs(graph, [start_node], visited, track_meta)
         return result
 
