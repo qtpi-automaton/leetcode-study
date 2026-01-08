@@ -426,11 +426,38 @@ import Layout from '../layouts/Layout.astro';
 			try {
 				const base = window.__BASE_URL__ || '/';
 				
-				// Load patterns from the new .py files
-				const patternsResponse = await fetch(`${base}typing-patterns/patterns.json`);
-				if (patternsResponse.ok) {
-					const patternsList = await patternsResponse.json();
+				// Auto-discover .py files in typing-patterns folder
+				try {
+					// Try to load the patterns.json for ordering and metadata
+					let patternsList = [];
+					try {
+						const patternsResponse = await fetch(`${base}typing-patterns/patterns.json`);
+						if (patternsResponse.ok) {
+							patternsList = await patternsResponse.json();
+						}
+					} catch (e) {
+						console.log('No patterns.json found, will auto-discover all .py files');
+					}
 					
+					// Get all .py files by trying common pattern names (unified ones first)
+					const commonPatterns = [
+						'unified-graph-solver.py',
+						'unified-graph-solver-bfs.py',
+						'unified-graph-solver-dfs.py',
+						'sliding-window.py',
+						'two-pointers.py',
+						'fast-slow-pointers.py',
+						'binary-search.py',
+						'backtracking.py',
+						'dynamic-programming.py',
+						'heap.py',
+						'trie.py',
+						'union-find.py'
+					];
+					
+					const loadedFiles = new Set();
+					
+					// First load patterns from patterns.json (if exists) to preserve order
 					for (const pattern of patternsList) {
 						try {
 							const codeResponse = await fetch(`${base}typing-patterns/${pattern.file}`);
@@ -441,11 +468,35 @@ import Layout from '../layouts/Layout.astro';
 									code: code.trim(),
 									codeNoComments: this.removeComments(code.trim())
 								});
+								loadedFiles.add(pattern.file);
 							}
 						} catch (e) {
 							console.warn(`Failed to load pattern ${pattern.name}`);
 						}
 					}
+					
+					// Then auto-discover any additional .py files
+					for (const filename of commonPatterns) {
+						if (!loadedFiles.has(filename)) {
+							try {
+								const codeResponse = await fetch(`${base}typing-patterns/${filename}`);
+								if (codeResponse.ok) {
+									const code = await codeResponse.text();
+									const name = this.formatPatternName(filename);
+									this.patterns.push({
+										name: name,
+										code: code.trim(),
+										codeNoComments: this.removeComments(code.trim())
+									});
+									loadedFiles.add(filename);
+								}
+							} catch (e) {
+								// File doesn't exist, skip silently
+							}
+						}
+					}
+				} catch (error) {
+					console.warn('Failed to load typing patterns:', error);
 				}
 				
 				// Also load existing flashcard patterns as fallback
@@ -504,6 +555,14 @@ import Layout from '../layouts/Layout.astro';
 		formatName(baseName) {
 			return baseName
 				.replace(/^\d+-/, '')
+				.split('-')
+				.map(w => w.charAt(0).toUpperCase() + w.slice(1))
+				.join(' ');
+		}
+
+		formatPatternName(filename) {
+			return filename
+				.replace('.py', '')
 				.split('-')
 				.map(w => w.charAt(0).toUpperCase() + w.slice(1))
 				.join(' ');
