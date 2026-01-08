@@ -1,8 +1,11 @@
-class UnifiedGraphSolver:
-    def _process_node(self, *args): pass
+class UGraphSolver:
+    def solve(self, data, mode="bfs", track_meta=False, use_visited=True, is_multi_source=False):
 
+    def _bfs(self, start_nodes, data, visited, track_meta):
+    def _dfs(self, start_nodes, data, visited, track_meta):
+
+    def _process_node(self, *args): pass
     def _is_valid(self, *args): return True
-    def _is_multi_source(self): return False
 
     def _get_start_points(self, *args): return []
     def _get_neighbors(self, *args): return []
@@ -17,8 +20,3 @@ class UnifiedGraphSolver:
         if track_meta: visited[node] = prev
         else:          visited.add(node)
 
-from enum import Enum, auto
-
-class Mode(Enum):
-    BFS = auto()
-    DFS = auto()
