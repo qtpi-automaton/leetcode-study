@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Unified Graph Solver - BFS",
+    "file": "unified-graph-solver-bfs.py",
+    "description": "BFS-focused graph traversal template with deque and level tracking"
+  },
+  {
+    "name": "Unified Graph Solver - DFS",
+    "file": "unified-graph-solver-dfs.py", 
+    "description": "DFS-focused graph traversal template with stack-based iteration"
+  },
+  {
+    "name": "Sliding Window",
+    "file": "sliding-window.py",
+    "description": "Two-pointer sliding window template for array problems"
+  },
+  {
+    "name": "Two Pointers",
+    "file": "two-pointers.py",
+    "description": "Converging two-pointer template for sorted arrays"
+  },
+  {
+    "name": "Fast Slow Pointers",
+    "file": "fast-slow-pointers.py",
+    "description": "Floyd's cycle detection and linked list midpoint template"
+  }
+]
