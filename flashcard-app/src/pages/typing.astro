@@ -662,20 +662,71 @@ import Layout from '../layouts/Layout.astro';
 
 		renderTargetCode(typed) {
 			const display = document.getElementById('target-code');
-			let html = '';
 			
-			for (let i = 0; i < this.currentCode.length; i++) {
-				const targetChar = this.currentCode[i];
-				const typedChar = typed[i];
-				let className = 'char-pending';
+			// Split both target and typed into lines for line-by-line comparison
+			const targetLines = this.currentCode.split('\n');
+			const typedLines = typed.split('\n');
+			
+			let html = '';
+			let charIndex = 0;
+			
+			for (let lineIndex = 0; lineIndex < targetLines.length; lineIndex++) {
+				const targetLine = targetLines[lineIndex];
+				const typedLine = typedLines[lineIndex] || '';
 				
-				if (i < typed.length) {
-					className = typedChar === targetChar ? 'char-correct-bg' : 'char-incorrect-bg';
-				} else if (i === typed.length) {
-					className = 'char-current';
+				// Determine if this entire line matches
+				const lineMatches = typedLine === targetLine && lineIndex < typedLines.length;
+				const lineIsBeingTyped = lineIndex === typedLines.length - 1 && typedLine.length > 0;
+				const lineIsComplete = lineIndex < typedLines.length - 1;
+				
+				// Process each character in the line
+				for (let charInLine = 0; charInLine < targetLine.length; charInLine++) {
+					const targetChar = targetLine[charInLine];
+					const typedChar = typedLine[charInLine];
+					let className = 'char-pending';
+					
+					if (lineMatches && lineIsComplete) {
+						// Entire line is correct and complete
+						className = 'char-correct-bg';
+					} else if (lineIsBeingTyped) {
+						// Currently typing this line - use character-by-character logic
+						if (charInLine < typedLine.length) {
+							className = typedChar === targetChar ? 'char-correct-bg' : 'char-incorrect-bg';
+						} else if (charInLine === typedLine.length) {
+							className = 'char-current';
+						}
+					} else if (lineIsComplete && !lineMatches) {
+						// Line is complete but has errors
+						if (charInLine < typedLine.length) {
+							className = typedChar === targetChar ? 'char-correct-bg' : 'char-incorrect-bg';
+						} else {
+							className = 'char-pending'; // Missing characters
+						}
+					} else if (charIndex === typed.length) {
+						// Current cursor position
+						className = 'char-current';
+					}
+					
+					html += `<span class="${className}">${this.escapeHtml(targetChar)}</span>`;
+					charIndex++;
 				}
 				
-				html += `<span class="${className}">${this.escapeHtml(targetChar)}</span>`;
+				// Add newline character if not the last line
+				if (lineIndex < targetLines.length - 1) {
+					let newlineClass = 'char-pending';
+					if (lineMatches && lineIsComplete) {
+						newlineClass = 'char-correct-bg';
+					} else if (lineIsBeingTyped && typedLine.length === targetLine.length) {
+						newlineClass = charIndex === typed.length ? 'char-current' : 'char-correct-bg';
+					} else if (lineIsComplete && typedLines[lineIndex] !== undefined) {
+						newlineClass = typedLines[lineIndex] === targetLine ? 'char-correct-bg' : 'char-incorrect-bg';
+					} else if (charIndex === typed.length) {
+						newlineClass = 'char-current';
+					}
+					
+					html += `<span class="${newlineClass}">\n</span>`;
+					charIndex++;
+				}
 			}
 			
 			display.innerHTML = html;

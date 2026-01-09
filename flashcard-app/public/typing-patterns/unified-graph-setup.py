@@ -5,14 +5,16 @@ class GraphSolver:
 
     def _init_visited(self, in_place, track_meta):
         if in_place: return None
-        return {} if track_meta else set()
+        if track_meta: return {}
+        else: return set()
     def _init_result(self, visited):
         return visited
     def _get_start_nodes(self, *args):
         return []
 
-    def _check_visited(self, visited, node):
-        return visited is not None and node in visited
+    def _check_visited(self, node, visited):
+        if visited is None: return False
+        else: return node in visited
 
     def _update_result(self, result):
         return result
