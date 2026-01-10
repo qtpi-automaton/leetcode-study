@@ -1,7 +1,7 @@
 from collections import deque
 
 class GraphSolver:
-    def solve(self, graph, mode="BFS", is_multi_source=False, in_place=False, track_meta=False):
+    def solve(self, graph, bfs=True, is_multi_source=False, in_place=False, track_meta=False):
 
     def _init_visited(self, in_place, track_meta):
         if in_place: return None
@@ -9,7 +9,7 @@ class GraphSolver:
         else: return set()
     def _init_result(self, visited):
         return visited
-    def _get_start_nodes(self, *args):
+    def _get_start_nodes(self, graph):
         return []
 
     def _check_visited(self, node, visited):
@@ -19,8 +19,7 @@ class GraphSolver:
     def _update_result(self, result):
         return result
 
-    def _bfs(self, graph, start_nodes, visited, track_meta):
-    def _dfs(self, graph, start_nodes, visited, track_meta):
+    def _traverse(self, graph, bfs, start_nodes, visited, track_meta):
 
     def _get_neighbors(self, *args):
         return []
