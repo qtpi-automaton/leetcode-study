@@ -26,9 +26,9 @@ class GraphSolver:
         return []
     def _is_valid(self, *args):
         return True
-    def _process_node(self, *args):
+    def _process(self, *args):
         pass
     def _mark(self, node, visited, parent, track_meta):
         if visited is None: return
         if track_meta: visited[node] = parent
-        else:          visited.add(node)
+        else: visited.add(node)
