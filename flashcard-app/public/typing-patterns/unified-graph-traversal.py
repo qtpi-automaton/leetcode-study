@@ -1,5 +1,5 @@
+class GraphSolver:
     def _traverse(self, graph, bfs, start_nodes, visited, track_meta):
-
         if bfs: container = deque()
         else: container = []
 
@@ -7,15 +7,13 @@
             if bfs:
                 self._mark(node, visited, None, track_meta)
                 container.append((node, 0))
-            else:
-                container.append((node, None))
+            else: container.append((node, None))
 
         while container:
             if bfs: node, meta = container.popleft()
             else: node, meta = container.pop()
 
-            if bfs:
-                self._process(node, meta)
+            if bfs: self._process(node, meta)
             else:
                 if self._check_visited(node, visited): continue
                 self._mark(node, visited, meta, track_meta)
@@ -26,6 +24,5 @@
                     if bfs:
                         self._mark(neighbor, visited, node, track_meta)
                         container.append((neighbor, meta + 1))
-                    else:
-                        container.append((neighbor, node))
+                    else: container.append((neighbor, node))
 
