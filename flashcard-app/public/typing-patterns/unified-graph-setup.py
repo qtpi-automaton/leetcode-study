@@ -12,14 +12,14 @@ class GraphSolver:
     def _get_start_nodes(self, graph):
         return []
 
+    def _traverse(self, graph, bfs, start_nodes, visited, track_meta):
+
     def _check_visited(self, node, visited):
         if visited is None: return False
         else: return node in visited
 
     def _update_result(self, result):
         return result
-
-    def _traverse(self, graph, bfs, start_nodes, visited, track_meta):
 
     def _get_neighbors(self, *args):
         return []
