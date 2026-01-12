@@ -21,13 +21,14 @@ class GraphSolver:
     def _update_result(self, result):
         return result
 
-    def _get_neighbors(self, *args):
-        return []
-    def _is_valid(self, *args):
-        return True
-    def _process(self, *args):
-        pass
     def _mark(self, node, marked, parent, metadata):
         if marked is None: return
         if metadata: marked[node] = parent
         else: marked.add(node)
+    def _process(self, *args):
+        pass
+    def _get_neighbors(self, *args):
+        return []
+    def _is_valid(self, *args):
+        return True
+
