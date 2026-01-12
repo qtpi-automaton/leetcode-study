@@ -1,15 +1,15 @@
 class GraphSolver:
-    def solve(self, graph, bfs=True, is_multi_source=False, in_place=False, track_meta=False):
-        marked = self._init_marked(in_place, track_meta)
+    def solve(self, graph, bfs=True, is_multi=False, in_place=False, metadata=False):
+        marked = self._init_marked(in_place, metadata)
         result = self._init_result(marked)
-        start_nodes = self._get_start_nodes(graph)
+        starts = self._get_starts(graph)
         
-        if bfs and is_multi_source:
-            self._traverse(graph, bfs, start_nodes, marked, track_meta)
+        if bfs and is_multi:
+            self._traverse(graph, bfs, starts, marked, metadata)
         else:
-            for start_node in start_nodes:
-                if not self._is_marked(start_node, marked):
+            for start in starts:
+                if not self._is_marked(start, marked):
                     result = self._update_result(result)
-                    self._traverse(graph, bfs, [start_node], marked, track_meta)
+                    self._traverse(graph, bfs, [start], marked, metadata)
         return result
 
