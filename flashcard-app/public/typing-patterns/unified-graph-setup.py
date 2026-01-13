@@ -25,10 +25,9 @@ class GraphSolver:
         if marked is None: return
         if metadata: marked[node] = parent
         else: marked.add(node)
-    def _process(self, *args):
+    def _process(self, node, meta):
         pass
-    def _get_neighbors(self, *args):
+    def _get_neighbors(self, node, graph):
         return []
-    def _is_valid(self, *args):
+    def _is_valid(self, node, graph):
         return True
-
