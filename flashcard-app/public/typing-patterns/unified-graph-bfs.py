@@ -7,7 +7,6 @@ def _traverse(self, graph, bfs, starts, marked, metadata):
 
     while con:
         node, meta = con.popleft()
-
         self._process(node, meta)
 
         for neighbor in self._get_neighbors(node, graph):

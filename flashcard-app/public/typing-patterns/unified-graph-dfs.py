@@ -6,7 +6,6 @@ def _traverse(self, graph, bfs, starts, marked, metadata):
 
     while con:
         node, meta = con.pop()
-
         if self._is_marked(node, marked): continue
         self._mark(node, marked, meta, metadata)
         self._process(node, 0)
