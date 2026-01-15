@@ -6,9 +6,11 @@ export async function GET() {
     const publicDir = path.join(process.cwd(), 'public');
     const flashcards = [];
 
-    // Scan all directories in public that start with flashcards_
+    // 1. Scan Standard Flashcards (flashcards_set*)
     const allDirs = fs.readdirSync(publicDir).filter(d => 
       d.startsWith('flashcards_') && 
+      !d.includes('graph') && 
+      !d.includes('python') &&
       fs.statSync(path.join(publicDir, d)).isDirectory()
     );
 
@@ -17,7 +19,6 @@ export async function GET() {
       const files = fs.readdirSync(setPath);
       const frontFiles = files.filter(f => f.endsWith('-front.md'));
       
-      // Parse set info from directory name: flashcards_set{N}_{subcategory}
       const parsed = parseSetDir(setDir);
       
       for (const frontFile of frontFiles) {
@@ -27,15 +28,58 @@ export async function GET() {
         if (files.includes(backFile)) {
           flashcards.push({
             id: `${setDir}-${baseName}`,
-            set: setDir,
-            setNumber: parsed.setNumber,
-            setName: parsed.setName,
-            subcategory: parsed.subcategory,
+            set: setDir, // Legacy support
+            type: 'standard',
+            category: 'Standard Patterns',
+            ...parsed,
             baseName: baseName,
             frontFile: `/${setDir}/${frontFile}`,
             backFile: `/${setDir}/${backFile}`
           });
         }
+      }
+    }
+
+    // 2. Scan Graph Problems (flashcards_graph)
+    const graphDir = path.join(publicDir, 'flashcards_graph');
+    if (fs.existsSync(graphDir)) {
+      const files = fs.readdirSync(graphDir);
+      const pyFiles = files.filter(f => f.endsWith('.py'));
+      
+      for (const pyFile of pyFiles) {
+        const baseName = pyFile.replace('.py', '');
+        const mdFile = `${baseName}.md`;
+        
+        if (files.includes(mdFile)) {
+          flashcards.push({
+            id: `graph-${baseName}`,
+            set: 'flashcards_graph',
+            type: 'graph-problem',
+            category: 'Graph Problems',
+            setName: 'Graph Problems',
+            baseName: baseName,
+            frontFile: `/flashcards_graph/${mdFile}`,
+            backFile: `/flashcards_graph/${pyFile}`
+          });
+        }
+      }
+    }
+
+    // 3. Scan Python Cheatsheet (flashcards_python)
+    const pythonDir = path.join(publicDir, 'flashcards_python');
+    if (fs.existsSync(pythonDir)) {
+      const dsFile = 'ds.md';
+      if (fs.existsSync(path.join(pythonDir, dsFile))) {
+        flashcards.push({
+          id: 'python-ds',
+          set: 'flashcards_python',
+          type: 'markdown-practice',
+          category: 'Python Cheatsheet',
+          setName: 'Data Structures',
+          baseName: 'Data Structures Cheatsheet',
+          frontFile: null, // No separate front, we type the content
+          backFile: `/flashcards_python/${dsFile}`
+        });
       }
     }
 
