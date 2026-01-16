@@ -1,33 +1,37 @@
-from collections import deque
+def solve(graph, bfs=True, iterative=True, weighted=False, backtrack=False, in_place=False, metadata=False):
+    return result
 
-class GraphSolver:
-    def solve(self, graph, bfs=True, is_multi=False, in_place=False, metadata=False):
+def _init_marked(in_place, metadata):
+    if in_place: return None
+    if metadata: return {}
+    return set()
 
-    def _init_marked(self, in_place, metadata):
-        if in_place: return None
-        if metadata: return {}
-        else: return set()
-    def _init_result(self, marked):
-        return marked
-    def _get_starts(self, graph):
-        return []
+def _init_result(marked): return marked
 
-    def _traverse(self, graph, bfs, starts, marked, metadata):
+def _get_starts(graph): return []
 
-    def _is_marked(self, node, marked):
-        if marked is None: return False
-        else: return node in marked
 
-    def _update_result(self, result):
-        return result
+def _traverse(graph, bfs, weighted, starts, marked, metadata):
 
-    def _mark(self, node, marked, parent, metadata):
-        if marked is None: return
-        if metadata: marked[node] = parent
-        else: marked.add(node)
-    def _process(self, node, meta):
-        pass
-    def _get_neighbors(self, node, graph):
-        return []
-    def _is_valid(self, node, graph):
-        return True
+def _is_marked(node, marked):
+    if marked is None: return False
+    return node in marked
+
+def _update_result(result): return result
+
+def _mark(node, marked, parent, metadata):
+    if marked is None: return
+    if metadata: marked[node] = parent
+    else: marked.add(node)
+
+def _process(node, meta): pass
+
+def _get_neighbors(node, graph): return []
+
+def _is_valid(node, graph): return True
+
+def _get_weight(node, neighbor): return 1
+
+def _unmark(node, marked):
+    if isinstance(marked, set): marked.discard(node)
+    elif isinstance(marked, dict): del marked[node]
