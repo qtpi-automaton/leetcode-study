@@ -1,24 +1,39 @@
-class GraphSolver:
-    def _traverse(self, graph, bfs, starts, marked, metadata):
-        if bfs: con = deque()
-        else: con = []
-        for node in starts:
-            if bfs:
-                self._mark(node, marked, None, metadata)
-                con.append((node, 0))
-            else: con.append((node, None))
-        while con:
-            if bfs: node, meta = con.popleft()
-            else: node, meta = con.pop()
-            if bfs: self._process(node, meta)
-            else:
-                if self._is_marked(node, marked): continue
-                self._mark(node, marked, meta, metadata)
-                self._process(node, 0)
-            for neighbor in self._get_neighbors(node, graph):
-                if self._is_valid(neighbor, graph) and not self._is_marked(neighbor, marked):
-                    if bfs:
-                        self._mark(neighbor, marked, node, metadata)
-                        con.append((neighbor, meta + 1))
-                    else: con.append((neighbor, node))
+def _traverse(graph, bfs, weighted, starts, marked, metadata):
+    if weighted: con = []
+    elif bfs:    con = deque()
+    else:        con = []
+    for node in starts:
+        if weighted:
+            heapq.heappush(con, (0, node))
+        elif bfs:
+            _mark(node, marked, 0, metadata)
+            con.append((0, node))
+        else:
+            con.append((None, node))
+    while con:
+        if weighted:
+            meta, node = heapq.heappop(con)
+        elif bfs:
+            meta, node = con.popleft()
+        else:
+            meta, node = con.pop()
+        if not bfs:
+            if _is_marked(node, marked): continue
+            _mark(node, marked, meta, metadata)
+
+        _process(node, meta)
+        for neighbor in _get_neighbors(node, graph):
+            if _is_valid(neighbor, graph):
+                if weighted:
+                    weight = _get_weight(node, neighbor)
+                    new_cost = meta + weight
+                    if not _is_marked(neighbor, marked):
+                        heapq.heappush(con, (new_cost, neighbor))
+                elif bfs:
+                    if not _is_marked(neighbor, marked):
+                        _mark(neighbor, marked, node, metadata)
+                        con.append((meta + 1, neighbor))
+                else:
+                    if not _is_marked(neighbor, marked):
+                        con.append((node, neighbor))
 
