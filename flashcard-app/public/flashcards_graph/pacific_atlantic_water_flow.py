@@ -1,48 +1,58 @@
-class Solution(GraphSolver):
+def _get_starts(graph):
+    # Logic: Selects edges based on the current ocean context.
+    # graph: The Solution instance.
+    starts = []
+    rows, cols = graph.rows, graph.cols
+    
+    if graph.current_ocean == "PACIFIC":
+        # Left Edge
+        for r in range(rows): starts.append((r, 0))
+        # Top Edge
+        for c in range(cols): starts.append((0, c))
+    else: # ATLANTIC
+        # Right Edge
+        for r in range(rows): starts.append((r, cols - 1))
+        # Bottom Edge
+        for c in range(cols): starts.append((rows - 1, c))
+        
+    return starts
+
+def _get_neighbors(node, graph):
+    # Logic: Upstream Flow.
+    # Water flows High->Low, so we search Low->High.
+    r, c = node
+    # Reuse simple directions
+    for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        nr, nc = r + dr, c + dc
+        # 1. Bounds Check
+        if 0 <= nr < graph.rows and 0 <= nc < graph.cols:
+            # 2. Height Check (The "Uphill" Logic)
+            # Neighbor must be EQUAL or HIGHER to flow down to us.
+            if graph.grid[nr][nc] >= graph.grid[r][c]:
+                yield (nr, nc)
+
+def _is_valid(node, graph):
+    # Logic handled in _get_neighbors for efficiency
+    return True
+
+class Solution:
     def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        if not heights: return []
+
+        # 1. Setup Context
         self.grid = heights
         self.rows = len(heights)
         self.cols = len(heights[0])
         
-        # 1. RUN FOR PACIFIC
+        # 2. Run Engine for PACIFIC
         self.current_ocean = "PACIFIC"
-        # We need the visited set returned, so in_place=False
-        p_visited = self.solve(heights, bfs=True, is_multi=True)
+        # bfs=True, is_multi=True (Start with ALL edges in queue)
+        # in_place=False (We need the set returned, don't modify a global)
+        pacific_reachable = solve(self, bfs=True, is_multi=True, in_place=False)
         
-        # 2. RUN FOR ATLANTIC
+        # 3. Run Engine for ATLANTIC
         self.current_ocean = "ATLANTIC"
-        a_visited = self.solve(heights, bfs=True, is_multi=True)
+        atlantic_reachable = solve(self, bfs=True, is_multi=True, in_place=False)
         
-        # 3. INTERSECTION
-        # Python sets allow '&' for intersection
-        return list(p_visited & a_visited)
-
-    # --- HOOKS ---
-
-    def _get_starts(self, graph):
-        starts = []
-        if self.current_ocean == "PACIFIC":
-            # Top row and Left col
-            for r in range(self.rows): starts.append((r, 0))
-            for c in range(self.cols): starts.append((0, c))
-        else:
-            # Bottom row and Right col
-            for r in range(self.rows): starts.append((r, self.cols - 1))
-            for c in range(self.cols): starts.append((self.rows - 1, c))
-        return starts
-
-    def _get_neighbors(self, node, graph):
-        r, c = node
-        for nr, nc in [(r+1,c), (r-1,c), (r,c+1), (r,c-1)]:
-            # TRICK: We put the logic here because we need 'node' AND 'neighbor'
-            # to compare heights. _is_valid only gets 'neighbor'.
-            
-            # 1. Check Bounds (Standard)
-            if 0 <= nr < self.rows and 0 <= nc < self.cols:
-                # 2. Check Height (Must go UPHILL or equal)
-                if self.grid[nr][nc] >= self.grid[r][c]:
-                    yield (nr, nc)
-
-    def _is_valid(self, neighbor, graph):
-        # We did all checks in _get_neighbors to access the current node height
-        return True
+        # 4. Intersection (Python Set Logic)
+        return list(pacific_reachable & atlantic_reachable)

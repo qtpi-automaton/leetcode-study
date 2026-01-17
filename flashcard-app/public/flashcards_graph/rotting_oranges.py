@@ -1,49 +1,68 @@
+def _get_starts(graph):
+    # Logic: 
+    # 1. Collect all initially rotten oranges ('2') as starts.
+    # 2. Count all fresh oranges ('1') to know if we finish successfully later.
+    starts = []
+    for r in range(graph.rows):
+        for c in range(graph.cols):
+            val = graph.grid[r][c]
+            if val == 2:
+                starts.append((r, c))
+            elif val == 1:
+                graph.fresh_count += 1
+    return starts
 
-class Solution(GraphSolver):
+def _get_neighbors(node, graph):
+    # Logic: Infection Spread.
+    # We immediately mutate '1' -> '2' here. This effectively 'marks' it.
+    r, c = node
+    
+    for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        nr, nc = r + dr, c + dc
+        
+        # 1. Bounds Check
+        if 0 <= nr < graph.rows and 0 <= nc < graph.cols:
+            
+            # 2. State Check (Is it a Fresh Orange?)
+            if graph.grid[nr][nc] == 1:
+                # 3. Mutate (Rot it immediately!)
+                # This acts as our "visited" check for future nodes.
+                graph.grid[nr][nc] = 2
+                graph.fresh_count -= 1
+                
+                yield (nr, nc)
+
+def _process(node, graph, meta):
+    # Logic: Track the passage of time.
+    # meta: The BFS Level (Minutes elapsed).
+    # Simply keep track of the deepest level reached.
+    graph.max_minutes = max(graph.max_minutes, meta)
+
+def _is_valid(node, graph):
+    # Validation handled in _get_neighbors for In-Place efficiency
+    return True
+
+class Solution:
     def orangesRotting(self, grid: List[List[int]]) -> int:
+        # 1. Setup Context
         self.rows = len(grid)
         self.cols = len(grid[0])
         self.grid = grid
         self.fresh_count = 0
         self.max_minutes = 0
         
-        # 1. SETUP & RUN
-        # We perform a scan inside _get_starts to count fresh oranges too
-        self.solve(grid, bfs=True, is_multi=True, in_place=True, metadata=True)
+        # 2. Run Engine
+        # is_multi=True : Start BFS from all '2's at once (Level 0).
+        # in_place=True : We don't need a 'visited' set; we mutate grid 1 -> 2.
+        # metadata=True : We need 'meta' to track the minute (BFS Depth).
+        solve(
+            graph=self, 
+            bfs=True, 
+            is_multi=True, 
+            in_place=True, 
+            metadata=True
+        )
         
-        # 2. FINAL CHECK
+        # 3. Final Check
+        # If fresh_count > 0, it means some oranges were unreachable (isolated).
         return self.max_minutes if self.fresh_count == 0 else -1
-
-    # --- HOOKS ---
-
-    def _get_starts(self, graph):
-        starts = []
-        for r in range(self.rows):
-            for c in range(self.cols):
-                if self.grid[r][c] == 2:
-                    starts.append((r, c))
-                elif self.grid[r][c] == 1:
-                    self.fresh_count += 1
-        return starts
-
-    def _get_neighbors(self, *args):
-        r, c = args[0]
-        # Standard directions
-        for nr, nc in [(r+1, c), (r-1, c), (r, c+1), (r, c-1)]:
-            # TRICK: For In-Place BFS, we must mutate BEFORE yielding
-            # to prevent the neighbor from being added by someone else.
-            if 0 <= nr < self.rows and 0 <= nc < self.cols:
-                if self.grid[nr][nc] == 1:
-                    self.grid[nr][nc] = 2 # Make it rotten immediately
-                    self.fresh_count -= 1
-                    yield (nr, nc)
-
-    def _is_valid(self, *args):
-        # We handled bounds and state checks inside _get_neighbors 
-        # to support the in-place mutation trick.
-        return True
-
-    def _process(self, *args):
-        node, meta = args
-        # meta is the Level (Time)
-        self.max_minutes = max(self.max_minutes, meta)
