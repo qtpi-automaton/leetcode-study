@@ -12,6 +12,6 @@ def solve(graph, in_place=False, metadata=False, dp=False, iterative=True, is_mu
             result = _update_result(result)
             _traverse(graph, [start], marked, metadata, bfs, weighted)
         else:
-            val = _traverse_recursive(graph, start, marked, None, metadata, backtrack, dp)
+            val = _traverse_recursive(graph, start, marked, None, metadata, dp, backtrack)
             result = _update_result(result, val)
     return result
