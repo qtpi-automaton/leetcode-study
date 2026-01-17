@@ -3,9 +3,9 @@ from collections import deque
 
 def solve(graph, in_place=False, metadata=False, dp=False, iterative=True, is_multi=False, bfs=True, weighted=False, backtrack=False):
 
-def _init_marked(in_place, metadata):
+def _init_marked(in_place, metadata, dp=False):
     if in_place: return None
-    if metadata: return {}
+    if metadata or dp: return {}
     return set()
 
 def _init_result(marked): return marked
