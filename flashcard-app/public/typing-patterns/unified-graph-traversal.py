@@ -1,7 +1,7 @@
 def _traverse(graph, starts, marked, metadata, bfs, weighted):
     if weighted: con = []
-    elif bfs:    con = deque()
-    else:        con = []
+    elif bfs: con = deque()
+    else: con = []
 
     for node in starts:
         if weighted:
