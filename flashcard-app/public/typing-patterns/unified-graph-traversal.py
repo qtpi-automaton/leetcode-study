@@ -2,6 +2,7 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
     if weighted: con = []
     elif bfs:    con = deque()
     else:        con = []
+
     for node in starts:
         if weighted:
             heapq.heappush(con, (0, node))
@@ -10,6 +11,7 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
             con.append((0, node))
         else:
             con.append((None, node))
+
     while con:
         if weighted:
             meta, node = heapq.heappop(con)
@@ -17,11 +19,13 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
             meta, node = con.popleft()
         else:
             meta, node = con.pop()
+
         if not bfs:
             if _is_marked(node, marked): continue
             _mark(node, marked, meta, metadata)
 
-        _process(node, meta)
+        _process(node, graph, meta)
+
         for neighbor in _get_neighbors(node, graph):
             if _is_valid(neighbor, graph):
                 if weighted:
@@ -36,4 +40,3 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
                 else:
                     if not _is_marked(neighbor, marked):
                         con.append((node, neighbor))
-
