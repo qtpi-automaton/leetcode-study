@@ -1,4 +1,4 @@
-def _traverse(graph, bfs, weighted, starts, marked, metadata):
+def _traverse(graph, starts, marked, metadata, bfs, weighted):
     if weighted: con = []
     elif bfs:    con = deque()
     else:        con = []
