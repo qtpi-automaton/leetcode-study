@@ -531,88 +531,30 @@ import Layout from '../layouts/Layout.astro';
 		async loadCorePatterns(base) {
 			// Auto-discover .py files in typing-patterns folder
 			try {
-				// Try to load the patterns.json for custom metadata (optional)
-				let customPatterns = {};
-				try {
-					const patternsResponse = await fetch(`${base}typing-patterns/patterns.json`);
-					if (patternsResponse.ok) {
-						const patternsList = await patternsResponse.json();
-						// Create lookup for custom names/descriptions
-						patternsList.forEach(p => {
-							customPatterns[p.file] = p;
-						});
-					}
-				} catch (e) {
-					console.log('No patterns.json found, using auto-discovery');
-				}
+				const response = await fetch(`${base}api/typing_patterns.json`);
+				if (!response.ok) throw new Error('Failed to fetch typing patterns');
 				
-				// Auto-discover all .py files by trying a comprehensive list
-				const potentialFiles = [
-					// Unified patterns (will be sorted alphabetically)
-					'unified-backtracking.py',
-					'unified-binary-search.py',
-					'unified-dynamic-programming.py',
-					'unified-graph-setup.py',
-					'unified-graph-solver.py',
-					'unified-graph-bfs.py',
-					'unified-graph-dfs.py',
-					'unified-graph-traversal.py',
-					'unified-heap.py',
-					'unified-sliding-window.py',
-					'unified-trie.py',
-					'unified-two-pointers.py',
-					'unified-union-find.py',
-					// Non-unified patterns
-					'backtracking.py',
-					'binary-search.py',
-					'dynamic-programming.py',
-					'fast-slow-pointers.py',
-					'graph-traversal.py',
-					'heap.py',
-					'sliding-window.py',
-					'trie.py',
-					'two-pointers.py',
-					'union-find.py'
-				];
-				
+				const patternList = await response.json();
 				const foundPatterns = [];
-				
-				// Check which files actually exist
-				for (const filename of potentialFiles) {
+
+				for (const patternInfo of patternList) {
 					try {
-						const codeResponse = await fetch(`${base}typing-patterns/${filename}`);
+						const codeResponse = await fetch(`${base}typing-patterns/${patternInfo.filename}`);
 						if (codeResponse.ok) {
 							const code = await codeResponse.text();
-							const customInfo = customPatterns[filename];
-							const name = customInfo?.name || this.formatPatternName(filename);
-							
 							foundPatterns.push({
-								filename,
-								name,
+								name: patternInfo.name,
 								code: code.trim(),
-								isUnified: filename.startsWith('unified-')
+								codeNoComments: this.removeComments(code.trim())
 							});
 						}
 					} catch (e) {
-						// File doesn't exist, skip silently
+						console.error(`Failed to load content for ${patternInfo.filename}`, e);
 					}
 				}
 				
-				// Sort: unified patterns first (alphabetically), then non-unified (alphabetically)
-				foundPatterns.sort((a, b) => {
-					if (a.isUnified && !b.isUnified) return -1;
-					if (!a.isUnified && b.isUnified) return 1;
-					return a.filename.localeCompare(b.filename);
-				});
-				
 				// Add to patterns array
-				foundPatterns.forEach(pattern => {
-					this.patterns.push({
-						name: pattern.name,
-						code: pattern.code,
-						codeNoComments: this.removeComments(pattern.code)
-					});
-				});
+				this.patterns.push(...foundPatterns);
 				
 			} catch (error) {
 				console.warn('Failed to load typing patterns:', error);
