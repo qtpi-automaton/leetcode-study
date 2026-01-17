@@ -1,7 +1,7 @@
 import heapq
 from collections import deque
 
-def solve(graph, in_place=False, metadata=False, iterative=True, is_multi=False, bfs=True, weighted=False, backtrack=False):
+def solve(graph, in_place=False, metadata=False, iterative=True, is_multi=False, bfs=True, weighted=False, backtrack=False, dp=False):
 
 def _init_marked(in_place, metadata):
     if in_place: return None

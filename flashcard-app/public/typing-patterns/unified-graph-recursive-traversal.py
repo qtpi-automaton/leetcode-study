@@ -1,19 +1,26 @@
-def _traverse_recursive(graph, node, marked, parent, metadata, backtrack):
-    if not _is_valid(node, graph) or _is_marked(node, marked):
+def _traverse_recursive(graph, node, marked, parent, metadata, backtrack, dp):
+    if _is_marked(node, marked):
+        if dp: return marked[node]
         return None
 
-    _mark(node, marked, parent, metadata)
+    if not _is_valid(node, graph): return None
+
+    if not dp:
+        _mark(node, marked, parent, metadata)
+
     _process(node, graph, 0)
 
     child_results = []
     for neighbor in _get_neighbors(node, graph):
-        child_result = _traverse_recursive(graph, neighbor, marked, node, metadata, backtrack)
+        child_result = _traverse_recursive(graph, neighbor, marked, node, metadata, backtrack, dp)
         if child_result is not None:
             child_results.append(child_result)
 
     result = _on_exit(node, child_results, graph)
 
-    if backtrack:
+    if dp:
+        _mark(node, marked, result, metadata=True)
+    elif backtrack:
         _unmark(node, marked)
 
     return result
