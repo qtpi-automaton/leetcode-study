@@ -1,4 +1,4 @@
-def solve(graph, in_place=False, metadata=False, iterative=True, is_multi=False, bfs=True, weighted=False, backtrack=False, dp=False):
+def solve(graph, in_place=False, metadata=False, dp=False, iterative=True, is_multi=False, bfs=True, weighted=False, backtrack=False):
     marked = _init_marked(in_place, metadata, dp) 
     result = _init_result(marked)
     starts = _get_starts(graph)
