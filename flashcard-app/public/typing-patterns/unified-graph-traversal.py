@@ -27,7 +27,7 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
         _process(node, graph, meta)
 
         for neighbor in _get_neighbors(node, graph):
-            if _is_valid(neighbor, graph):
+            if _is_valid(neighbor, graph, marked):
                 if weighted:
                     weight = _get_weight(node, neighbor)
                     new_cost = meta + weight

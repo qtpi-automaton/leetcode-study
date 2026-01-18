@@ -3,7 +3,7 @@ def _traverse_recursive(graph, node, marked, parent, metadata, dp, backtrack):
         if dp: return marked[node]
         return None
 
-    if not _is_valid(node, graph): return None
+    if not _is_valid(node, graph, marked): return None
 
     if not dp:
         _mark(node, marked, parent, metadata)
