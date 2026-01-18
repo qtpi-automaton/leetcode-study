@@ -31,7 +31,7 @@ def _process(node, graph, meta): pass
 
 def _get_neighbors(node, graph): return []
 
-def _is_valid(node, graph): return True
+def _is_valid(node, graph, marked): return True
 
 def _get_weight(node, neighbor): return 1
 
