@@ -3,10 +3,11 @@ def _traverse_recursive(graph, node, marked, parent, metadata, dp, backtrack):
     if _is_marked(node, marked):
         if dp: return marked[node]
         return None
+
     if not dp:
         _mark(node, marked, parent, metadata)
 
-    _process(node, graph, 0)
+    _on_enter(node, graph, 0)
 
     child_results = []
     for neighbor in _get_neighbors(node, graph):

@@ -1,7 +1,7 @@
 def _traverse(graph, starts, marked, metadata, bfs, weighted):
     if weighted: con = []
-    elif bfs: con = deque()
-    else: con = []
+    elif bfs:    con = deque()
+    else:        con = []
 
     for node in starts:
         if weighted:
@@ -24,7 +24,7 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
             if _is_marked(node, marked): continue
             _mark(node, marked, meta, metadata)
 
-        _process(node, graph, meta)
+        _on_enter(node, graph, meta)
 
         for neighbor in _get_neighbors(node, graph):
             if _is_valid(neighbor, graph, marked):

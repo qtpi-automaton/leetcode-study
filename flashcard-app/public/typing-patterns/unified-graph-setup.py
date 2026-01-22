@@ -27,7 +27,7 @@ def _mark(node, marked, parent, metadata):
     if metadata: marked[node] = parent
     else: marked.add(node)
 
-def _process(node, graph, meta): pass
+def _on_enter(node, graph, meta): pass
 
 def _get_neighbors(node, graph): return []
 
@@ -40,5 +40,3 @@ def _on_exit(node, child_results, graph): return child_results
 def _unmark(node, marked):
     if isinstance(marked, set): marked.discard(node)
     elif isinstance(marked, dict): del marked[node]
-
-
