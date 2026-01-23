@@ -30,9 +30,9 @@ def _traverse(graph, starts, marked, metadata, bfs, weighted):
             if _is_valid(neighbor, graph, marked):
                 if weighted:
                     weight = _get_weight(node, neighbor)
-                    new_cost = meta + weight
+                    nweight = meta + weight
                     if not _is_marked(neighbor, marked):
-                        heapq.heappush(con, (new_cost, neighbor))
+                        heapq.heappush(con, (nweight, neighbor))
                 elif bfs:
                     if not _is_marked(neighbor, marked):
                         _mark(neighbor, marked, node, metadata)
