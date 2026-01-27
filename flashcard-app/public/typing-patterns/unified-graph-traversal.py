@@ -1,42 +1,38 @@
-def _traverse(graph, starts, marked, metadata, bfs, weighted):
+def traverse(nodes):
     if weighted: con = []
     elif bfs:    con = deque()
     else:        con = []
 
-    for node in starts:
+    for node in nodes:
         if weighted:
             heapq.heappush(con, (0, node))
         elif bfs:
-            _mark(node, marked, 0, metadata)
+            mark(node, marked, None, metadata)
             con.append((0, node))
         else:
             con.append((None, node))
 
     while con:
-        if weighted:
-            meta, node = heapq.heappop(con)
-        elif bfs:
-            meta, node = con.popleft()
-        else:
-            meta, node = con.pop()
+        if weighted:      meta, node = heapq.heappop(con)
+        elif bfs:         meta, node = con.popleft()
+        else:             meta, node = con.pop()
 
         if not bfs:
-            if _is_marked(node, marked): continue
-            _mark(node, marked, meta, metadata)
+            if is_marked(node, marked): continue
+            mark(node, marked, meta, metadata)
 
-        _on_enter(node, graph, meta)
+        on_enter(node, meta)
 
-        for neighbor in _get_neighbors(node, graph):
-            if _is_valid(neighbor, graph, marked):
+        for neighbor in get_neighbors(node):
+            if is_valid(neighbor):
                 if weighted:
-                    weight = _get_weight(node, neighbor)
-                    nweight = meta + weight
-                    if not _is_marked(neighbor, marked):
-                        heapq.heappush(con, (nweight, neighbor))
+                    new_cost = meta + get_weight(node, neighbor)
+                    if not is_marked(neighbor, marked):
+                        heapq.heappush(con, (new_cost, neighbor))
                 elif bfs:
-                    if not _is_marked(neighbor, marked):
-                        _mark(neighbor, marked, node, metadata)
+                    if not is_marked(neighbor, marked):
+                        mark(neighbor, marked, node, metadata)
                         con.append((meta + 1, neighbor))
                 else:
-                    if not _is_marked(neighbor, marked):
+                    if not is_marked(neighbor, marked):
                         con.append((node, neighbor))
