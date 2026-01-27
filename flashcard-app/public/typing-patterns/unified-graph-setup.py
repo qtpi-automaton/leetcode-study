@@ -4,10 +4,8 @@ def init_marked(in_place, metadata, dp=False):
     return set()
 
 def get_indegree(graph):
-    if isinstance(graph, list):
-        nodes = range(len(graph))
-    else:
-        nodes = graph.keys()
+    if isinstance(graph, list): nodes = range(len(graph))
+    else: nodes = graph.keys()
     degree = {u: 0 for u in nodes}
     for u in nodes:
         for v in graph[u]:
