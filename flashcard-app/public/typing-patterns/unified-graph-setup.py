@@ -16,10 +16,12 @@ def is_marked(node, marked):
     if marked is None: return False
     return node in marked
 
-def mark(node, marked, meta, metadata):
+def mark(node, marked, meta):
     if marked is None: return
-    if metadata: marked[node] = meta
-    else: marked.add(node)
+    if isinstance(marked, dict):
+        marked[node] = meta        
+    else:
+        marked.add(node)
 
 def unmark(node, marked):
     if marked is None: return
