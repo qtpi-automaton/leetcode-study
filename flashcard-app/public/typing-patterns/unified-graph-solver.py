@@ -18,14 +18,11 @@ def solve(graph, in_place=False, metadata=False, dp=False,
         else:
             return graph.keys()
 
-    def update_result(res, val=None):
-        return res
-
-    def on_enter(node, meta):
-        pass
-
     def get_neighbors(node):
         return graph[node]
+
+    def get_weight(node, neighbor):
+        return 1
 
     def is_valid(node):
         if indegree is not None:
@@ -33,8 +30,11 @@ def solve(graph, in_place=False, metadata=False, dp=False,
             return indegree[node] == 0
         return True
 
-    def get_weight(node, neighbor):
-        return 1
+    def update_result(res, val=None):
+        return res
+
+    def on_enter(node, meta):
+        pass
 
     def on_exit(node, child_results):
         return child_results
