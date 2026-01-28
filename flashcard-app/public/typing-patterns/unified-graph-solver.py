@@ -55,3 +55,14 @@ def solve(graph, in_place=False, metadata=False, dp=False,
             result = update_result(result, val)
 
     return result
+
+
+    # --- 1. CONFIGURATION PRESETS ---
+    # PRESETS = {
+    #     'kahn':      {'bfs': True, 'is_multi': True, 'indegree': True},
+    #     'dijkstra':  {'weighted': True},
+    #     'dfs':       {'bfs': False},
+    #     'bfs':       {'bfs': True},
+    #     'dp':        {'iterative': False, 'dp': True},
+    #     'backtrack': {'iterative': False, 'backtrack': True}
+    # }
