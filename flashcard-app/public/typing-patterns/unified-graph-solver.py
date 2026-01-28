@@ -9,8 +9,8 @@ def solve(graph, in_place=False, metadata=False, dp=False,
     def get_starts():
         if indegree is not None:
             starts = []
-            for node, count in indegree.items():
-                if count == 0:
+            for node, deg in indegree.items():
+                if deg == 0:
                     starts.append(node)
             return starts
         if isinstance(graph, list):
