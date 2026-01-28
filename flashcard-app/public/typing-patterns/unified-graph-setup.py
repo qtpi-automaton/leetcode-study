@@ -26,8 +26,7 @@ def mark(node, marked, meta):
 def unmark(node, marked):
     if marked is None: return
     if isinstance(marked, dict): del marked[node]
-    elif isinstance(marked, set): marked.discard(node)
-
+    else: marked.discard(node)
 
 # import heapq
 # from collections import deque
